@@ -34,3 +34,10 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## SDXL image generation demo
+
+`src/app/api/generate-sdxl` calls a RunPod serverless endpoint to generate images for the
+cyberpunk LoRA demo project. The Docker worker that endpoint runs lives in `runpod_worker/` —
+see `runpod_worker/README.md` to build, push, and deploy it, then set `RUNPOD_API_KEY` and
+`RUNPOD_SDXL_ENDPOINT_ID` in `.env.local`.
