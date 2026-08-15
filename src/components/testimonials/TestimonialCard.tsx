@@ -1,14 +1,8 @@
-import { Star } from "lucide-react";
 import type { Testimonial } from "@/data/testimonials";
 
 export default function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
   return (
     <div className="bg-surface p-8 flex flex-col gap-6 transition-colors duration-200 hover:bg-surface-raised">
-      <div className="flex gap-0.5">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <Star key={i} size={13} className="text-accent fill-accent" strokeWidth={1} />
-        ))}
-      </div>
       <blockquote className="text-quote leading-[1.8] font-light text-sm flex-1 m-0">
         &ldquo;{testimonial.quote}&rdquo;
       </blockquote>
