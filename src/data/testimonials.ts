@@ -5,6 +5,7 @@ export type Testimonial = {
   title: string;
   company: string;
   photo: string;
+  linkedin: string;
 };
 
 export const TESTIMONIALS: Testimonial[] = [
@@ -16,6 +17,7 @@ export const TESTIMONIALS: Testimonial[] = [
     title: "Reference · Triad Tech",
     company: "matt@triad.tech",
     photo: "/assets/testimonials/matt-cook.jpeg",
+    linkedin: "https://www.linkedin.com/in/mcook08/",
   },
   // TODO: placeholder quote pending Mic's real wording — see design handoff README "Known gaps"
   {
@@ -26,6 +28,7 @@ export const TESTIMONIALS: Testimonial[] = [
     title: "Reference · West TN Consulting",
     company: "miclainkeffeler@westtn.consulting",
     photo: "/assets/testimonials/miclain-keffeler.jpeg",
+    linkedin: "https://www.linkedin.com/in/miclaink/",
   },
   {
     quote:
@@ -35,5 +38,6 @@ export const TESTIMONIALS: Testimonial[] = [
     title: "Mentor · Sr. Engineer, EA",
     company: "August 2026",
     photo: "/assets/testimonials/kevin-reed.jpeg",
+    linkedin: "https://www.linkedin.com/in/kevin-a-reed/",
   },
 ];

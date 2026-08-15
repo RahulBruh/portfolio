@@ -3,7 +3,12 @@ import type { Testimonial } from "@/data/testimonials";
 
 export default function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
   return (
-    <div className="bg-surface p-8 flex flex-col gap-6 transition-colors duration-200 hover:bg-surface-raised">
+    <a
+      href={testimonial.linkedin}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="bg-surface p-8 flex flex-col gap-6 transition-colors duration-200 hover:bg-surface-raised"
+    >
       <div className="flex items-center gap-3 pb-4 border-b border-border min-h-[72px]">
         <Image
           src={testimonial.photo}
@@ -21,6 +26,6 @@ export default function TestimonialCard({ testimonial }: { testimonial: Testimon
       <blockquote className="text-quote leading-[1.8] font-light text-sm flex-1 m-0">
         &ldquo;{testimonial.quote}&rdquo;
       </blockquote>
-    </div>
+    </a>
   );
 }
