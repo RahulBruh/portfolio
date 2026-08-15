@@ -6,7 +6,7 @@ const RUNPOD_BASE_URL = process.env.RUNPOD_BASE_URL || "https://api.runpod.ai";
 const RUNPOD_API_KEY = process.env.RUNPOD_API_KEY;
 const RUNPOD_SDXL_ENDPOINT_ID = process.env.RUNPOD_SDXL_ENDPOINT_ID;
 
-const MAX_PROMPT_LENGTH = 300;
+const MAX_PROMPT_LENGTH = 500;
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
 const RATE_LIMIT_MAX_REQUESTS = 8;
 
