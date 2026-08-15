@@ -7,12 +7,10 @@ type JobStatus = "idle" | "submitting" | "queued" | "running" | "done" | "error"
 
 const POLL_INTERVAL_MS = 2500;
 const MAX_POLL_MS = 3 * 60 * 1000;
-const MAX_PROMPT_LENGTH = 300;
+const MAX_PROMPT_LENGTH = 500;
 
 const EXAMPLE_PROMPTS = [
-  "a lone samurai standing in a neon-lit rain-soaked alley",
-  "a street food vendor's stall under holographic billboards",
-  "a cybernetic courier weaving through flying traffic at night",
+  "Cyberpunk city skyline at night, dense futuristic skyscrapers, glowing neon signs in Japanese and English, holographic billboards, rain-slicked streets reflecting pink and cyan light, flying vehicles in the distance, clear crisp air, sharp visibility, cinematic wide shot, highly detailed architecture, volumetric lighting, blade runner aesthetic, 8k, ultra sharp",
 ];
 
 export default function SdxlLoraDemo() {
