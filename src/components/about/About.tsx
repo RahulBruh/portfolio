@@ -56,8 +56,8 @@ export default function About() {
           </p>
           <p className="text-text-muted leading-[1.8] mb-10 font-light">
             I like working at every layer of the stack — from fitting an SDXL LoRA training run
-            onto a single 8GB GPU to writing a C++ terminal gateway that wakes my desktop from an
-            iPhone. Memphis, TN based, permanent resident.
+            onto a 24GB GPU trained using RunPod to writing a C++ terminal gateway that wakes my
+            desktop from an iPhone. Memphis, TN based, permanent resident.
           </p>
           <div className="flex flex-col gap-4">
             {SKILLS.map((group) => (

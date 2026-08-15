@@ -17,7 +17,7 @@ export const PROJECTS: Project[] = [
     title: "SDXL LoRA Fine-Tune",
     tag: "AI / ML · Jul 2026",
     shortDesc:
-      "Cyberpunk-style LoRA adapter for Stable Diffusion XL, trained end-to-end on a single 8GB GPU.",
+      "Cyberpunk-style LoRA adapter for Stable Diffusion XL, trained end-to-end on a 24GB GPU via RunPod.",
     description:
       "Fine-tuned Stable Diffusion XL via LoRA (Diffusers, PEFT) to specialize image generation toward a custom visual style, training a low-rank adapter on the UNet rather than the full 2.6B+ parameter model.",
     img: "/assets/sdxl-lora.png",
@@ -34,7 +34,7 @@ export const PROJECTS: Project[] = [
     github: "https://github.com/RahulBruh/sdxl-cyberpunk-lora",
     highlights: [
       "Fine-tuned Stable Diffusion XL via LoRA (Diffusers, PEFT) to specialize image generation toward a custom visual style, training a low-rank adapter on the UNet rather than the full 2.6B+ parameter model",
-      "Engineered a memory-constrained training pipeline in PyTorch and Accelerate (bf16 mixed precision, gradient checkpointing, 8-bit Adam via bitsandbytes, gradient accumulation) that fit entirely on a single consumer 8GB GPU",
+      "Engineered a memory-constrained training pipeline in PyTorch and Accelerate (bf16 mixed precision, gradient checkpointing, 8-bit Adam via bitsandbytes, gradient accumulation) trained on a 24GB GPU rented from RunPod",
       "Built the end-to-end pipeline from scratch: dataset curation/preprocessing with Hugging Face Datasets, checkpoint-based overfitting analysis across training runs, and a CLI plus Gradio web app for inference",
     ],
   },
