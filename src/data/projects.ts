@@ -13,6 +13,32 @@ export type Project = {
 
 export const PROJECTS: Project[] = [
   {
+    id: "stripe-self-healing-api",
+    title: "Self-Maintaining Stripe API",
+    tag: "Multi-Agent AI · Aug 2026",
+    shortDesc:
+      "A multi-agent pipeline that detects Stripe API breaking changes, fixes affected code, and opens a PR — inspired by YC's Request for Startups on self-sustaining APIs.",
+    description:
+      "Inspired by Y Combinator's Request for Startups theme on self-sustaining APIs — the idea that API providers shouldn't just announce breaking changes, they should apply the fixes. Built a 5-agent pipeline (Planning, Retriever, Synthesizer, Critic/Verifier, Orchestrator) that watches Stripe's API changelog, finds every affected call site in a codebase, drafts a fix, verifies it by running the codebase's real test suite in a sandbox, and opens a human-reviewed pull request.",
+    img: "/assets/stripe-self-maintaining-api.png",
+    tech: [
+      "Claude API",
+      "Python",
+      "ChromaDB",
+      "SQLite",
+      "AST",
+      "Docker",
+      "GitHub CLI",
+      "Stripe SDK",
+    ],
+    github: "https://github.com/RahulBruh/stripe-self-maintaining-api",
+    highlights: [
+      "Architected a 5-agent pipeline (Planning, Retriever, Synthesizer, Critic/Verifier, Orchestrator) that autonomously detects Stripe API changes and generates fix PRs, integrating the Claude API for structured LLM reasoning (forced tool-use calls for classification, code synthesis, and verification), ChromaDB for semantic code retrieval, SQLite for relational state, Python AST analysis for call-site extraction behind a pluggable language-adapter interface, and Docker + GitHub CLI for sandboxed test verification and automated PR delivery.",
+      "Diagnosed and resolved two failure classes that crashed the pipeline on rerun: non-idempotent re-indexing that silently duplicated call-site records (fixed by clearing state before each index pass) and a fragile LLM-reproduced-text patching strategy that broke on whitespace drift (redesigned to anchor every patch on byte-exact AST source spans via ast.get_source_segment, eliminating the failure mode instead of tolerating it).",
+      "Validated end-to-end against a synthetic repo modeling a real historical Stripe deprecation (the 2020 Plans-to-Prices migration): reached 100% precision on affected-usage detection after calibrating a semantic-search distance threshold that removed a false-positive match, and verified fixes via real sandboxed pytest execution, correctly distinguishing 2 stale-test failures from actual regressions before opening a fully automated PR.",
+    ],
+  },
+  {
     id: "sdxl-lora",
     title: "SDXL LoRA Fine-Tune",
     tag: "AI / ML · Jul 2026",
