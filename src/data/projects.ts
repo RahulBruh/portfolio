@@ -20,7 +20,7 @@ export const PROJECTS: Project[] = [
       "A multi-agent pipeline that detects Stripe API breaking changes, fixes affected code, and opens a PR — inspired by YC's Request for Startups on self-sustaining APIs.",
     description:
       "Inspired by Y Combinator's Request for Startups theme on self-sustaining APIs — the idea that API providers shouldn't just announce breaking changes, they should apply the fixes. Built a 5-agent pipeline (Planning, Retriever, Synthesizer, Critic/Verifier, Orchestrator) that watches Stripe's API changelog, finds every affected call site in a codebase, drafts a fix, verifies it by running the codebase's real test suite in a sandbox, and opens a human-reviewed pull request.",
-    img: "/assets/stripe-self-maintaining-api.png",
+    img: "/assets/stripe-self-maintaining-api-logo.png",
     tech: [
       "Claude API",
       "Python",
