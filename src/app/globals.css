@@ -48,13 +48,15 @@ body {
   box-sizing: border-box;
 }
 
-a {
-  color: var(--color-accent);
-  text-decoration: none;
-}
+@layer base {
+  a {
+    color: var(--color-accent);
+    text-decoration: none;
+  }
 
-a:hover {
-  color: var(--color-accent-hover);
+  a:hover {
+    color: var(--color-accent-hover);
+  }
 }
 
 ::selection {
