@@ -6,7 +6,6 @@ import { Loader2, Sparkles } from "lucide-react";
 type JobStatus = "idle" | "submitting" | "queued" | "running" | "done" | "error";
 
 const POLL_INTERVAL_MS = 2500;
-const MAX_POLL_MS = 3 * 60 * 1000;
 const MAX_PROMPT_LENGTH = 500;
 
 const EXAMPLE_PROMPTS = [
@@ -18,19 +17,10 @@ export default function SdxlLoraDemo() {
   const [status, setStatus] = useState<JobStatus>("idle");
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const pollDeadline = useRef(0);
   const pollTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const poll = useCallback((jobId: string) => {
-    pollDeadline.current = Date.now() + MAX_POLL_MS;
-
     const tick = async () => {
-      if (Date.now() > pollDeadline.current) {
-        setStatus("error");
-        setErrorMessage("Generation timed out. Try again.");
-        return;
-      }
-
       try {
         const res = await fetch(`/api/generate-sdxl/status/${jobId}`);
         const data = await res.json();
