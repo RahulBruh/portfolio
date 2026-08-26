@@ -40,7 +40,6 @@ export default function Contact() {
             Download résumé
           </a>
         </div>
-        <p className="text-xs text-text-muted m-0 font-code">Phone: (901)-530-4222</p>
       </div>
     </section>
   );
