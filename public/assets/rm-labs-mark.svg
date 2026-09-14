@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="675" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0E1C2B"/>
+      <stop offset="1" stop-color="#17293D"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <g transform="translate(600 300)">
+    <rect x="-90" y="-90" width="180" height="180" rx="42" fill="#0B1622" stroke="#26394E" stroke-width="2"/>
+    <rect x="-52" y="-40" width="104" height="16" rx="8" fill="#7B8FA1"/>
+    <rect x="-52" y="-8" width="104" height="16" rx="8" fill="#FFD84D"/>
+    <rect x="-52" y="24" width="68" height="16" rx="8" fill="#7B8FA1"/>
+  </g>
+  <text x="600" y="470" text-anchor="middle" font-family="'Segoe UI', Helvetica, Arial, sans-serif" font-size="54" font-weight="600" letter-spacing="2" fill="#E8EEF3">RM LABS</text>
+  <text x="600" y="512" text-anchor="middle" font-family="'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" letter-spacing="1" fill="#8FA3B4">Ask your own documents. Get answers you can trace.</text>
+</svg>

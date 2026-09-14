@@ -20,7 +20,7 @@ export default function ProjectCard({ project, index }: { project: Project; inde
         </span>
       </div>
       <Link
-        href={`/projects/${project.id}`}
+        href={project.href ?? `/projects/${project.id}`}
         className="flex-1 text-left bg-surface border-none border-t border-border p-6 cursor-pointer transition-colors duration-300 hover:bg-surface-raised block"
       >
         <div className="flex items-start justify-between gap-4 mb-3">

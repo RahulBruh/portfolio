@@ -7,11 +7,36 @@ export type Project = {
   img: string;
   img2?: string;
   tech: string[];
-  github: string;
+  github?: string;
   highlights: string[];
+  /** Overrides the default `/projects/[id]` link — for projects with their own dedicated route. */
+  href?: string;
 };
 
 export const PROJECTS: Project[] = [
+  {
+    id: "rm-labs",
+    title: "RM Labs",
+    tag: "Interactive Demo · Sep 2026",
+    shortDesc:
+      "A citation-grounded document Q&A concept — drop in your files, ask in plain English, and every claim in the answer traces back to the exact passage it came from.",
+    description:
+      "RM Labs is a UX concept for a document Q&A assistant: drag in whatever files you already have — contracts, policies, a renewals spreadsheet — and ask questions in plain English instead of hunting through pages by hand. The interesting constraint was trust, not retrieval: every sentence in an answer carries a numbered citation, and hovering or clicking it cross-highlights the exact retrieved passage and page it came from, so nothing in the answer is left unverifiable.",
+    img: "/assets/rm-labs-mark.svg",
+    tech: [
+      "Vanilla JavaScript",
+      "CSS Grid & Custom Properties",
+      "Web Animations",
+      "ARIA / Accessibility",
+    ],
+    href: "/rm-labs",
+    highlights: [
+      "Built a fully scripted, dependency-free interaction sequence (Promise-chained async steps with a cancellation token) that drives a three-pane workspace — sources, conversation, and retrieved passages — through file upload, indexing, question typing, retrieval, and token-by-token answer streaming.",
+      "Designed bidirectional citation linking: inline citation pills in the streamed answer and their source passage cards share hover/focus/click state, so a reader can jump from a claim straight to the sentence that grounds it and back.",
+      "Implemented an accessible file-scope control (keyboard-operable checkbox list with ARIA roles) that visibly changes what the assistant is allowed to search, making the retrieval boundary a first-class, inspectable part of the UI rather than a hidden backend detail.",
+      "Respected `prefers-reduced-motion` end-to-end (typing, streaming, count-up, and transition timings all collapse under a shared time-scaling helper) and kept the whole demo replayable and interruptible via a single monotonically incrementing run token.",
+    ],
+  },
   {
     id: "stripe-self-healing-api",
     title: "Self-Maintaining Stripe API",

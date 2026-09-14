@@ -8,12 +8,12 @@ import SdxlLoraDemo from "@/components/project-detail/SdxlLoraDemo";
 import { GitHubIcon } from "@/components/shared/icons";
 
 export function generateStaticParams() {
-  return PROJECTS.map((p) => ({ slug: p.id }));
+  return PROJECTS.filter((p) => !p.href).map((p) => ({ slug: p.id }));
 }
 
 export async function generateMetadata(props: PageProps<"/projects/[slug]">) {
   const { slug } = await props.params;
-  const project = PROJECTS.find((p) => p.id === slug);
+  const project = PROJECTS.find((p) => p.id === slug && !p.href);
   if (!project) return {};
   return {
     title: `${project.title} — Rahul Moka`,
@@ -23,7 +23,7 @@ export async function generateMetadata(props: PageProps<"/projects/[slug]">) {
 
 export default async function ProjectPage(props: PageProps<"/projects/[slug]">) {
   const { slug } = await props.params;
-  const project = PROJECTS.find((p) => p.id === slug);
+  const project = PROJECTS.find((p) => p.id === slug && !p.href);
   if (!project) notFound();
 
   const otherProjects = PROJECTS.filter((p) => p.id !== project.id);
@@ -56,15 +56,17 @@ export default async function ProjectPage(props: PageProps<"/projects/[slug]">) 
             ))}
           </ul>
           <div className="flex gap-4 flex-wrap">
-            <a
-              href={project.github}
-              target="_blank"
-              rel="noopener"
-              className="flex items-center gap-2 whitespace-nowrap border border-border text-text-muted px-5 py-2.5 text-sm transition-all duration-200 hover:text-accent hover:border-accent-border-40"
-            >
-              <GitHubIcon size={15} />
-              View Code
-            </a>
+            {project.github && (
+              <a
+                href={project.github}
+                target="_blank"
+                rel="noopener"
+                className="flex items-center gap-2 whitespace-nowrap border border-border text-text-muted px-5 py-2.5 text-sm transition-all duration-200 hover:text-accent hover:border-accent-border-40"
+              >
+                <GitHubIcon size={15} />
+                View Code
+              </a>
+            )}
             <Link
               href="/"
               className="flex items-center gap-2 whitespace-nowrap bg-accent text-bg px-5 py-2.5 text-sm font-medium transition-opacity duration-200 hover:opacity-90"
