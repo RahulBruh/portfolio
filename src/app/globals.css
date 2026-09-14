@@ -44,6 +44,33 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* AI Services page (/RAG) — its own "Nocturne" palette (dark navy/purple,
+   Inter-only type), scoped to this one route via .rag so the rest of the
+   site keeps the cyan/Playfair/JetBrains Mono system above. Overriding the
+   shared token names lets this page reuse the ordinary bg-surface,
+   text-text-muted, text-accent, border-border utilities with new values;
+   the extra --rag-* tokens cover shades that have no site-wide equivalent. */
+.rag {
+  --color-bg: #161826;
+  --color-surface: #232532;
+  --color-text: #e9e9ed;
+  --color-text-muted: #cfd3e5;
+  --color-accent: #9184d9;
+  --color-accent-hover: #a7a1db;
+  --color-border: color-mix(in srgb, #e9e9ed 16%, transparent);
+
+  --rag-accent-300: #d2cefd;
+  --rag-accent-700: #5d5294;
+  --rag-accent-800: #423a6a;
+  --rag-accent-100: #f5f4ff;
+  --rag-neutral-500: #9397ab;
+  --rag-neutral-700: #595d6c;
+  --rag-neutral-900: #292b31;
+  --rag-radius-md: 8px;
+  --rag-radius-lg: 14px;
+  --rag-shadow-md: 0 0 0 1px #595d6c, 0 6px 18px rgba(0, 0, 0, 0.55);
+}
+
 * {
   box-sizing: border-box;
 }
@@ -66,4 +93,12 @@ body {
 :focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
+}
+
+/* The /RAG service accordion sets its transitions inline so each property keeps
+   its own duration; !important is what lets this override them. */
+@media (prefers-reduced-motion: reduce) {
+  [data-rag-motion] {
+    transition: none !important;
+  }
 }

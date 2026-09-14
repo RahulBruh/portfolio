@@ -1,11 +1,22 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { Menu } from "lucide-react";
 import { scrollToId } from "@/lib/scroll";
 
-const NAV_LINKS = ["Experience", "Projects", "About", "Testimonials", "Contact"];
+/** `href` marks a route link; the rest scroll to a section on `/`. */
+type NavLink = { label: string; href?: string };
+
+const NAV_LINKS: NavLink[] = [
+  { label: "Experience" },
+  { label: "Projects" },
+  { label: "About" },
+  { label: "AI Services", href: "/RAG" },
+  { label: "Testimonials" },
+  { label: "Contact" },
+];
 
 export default function Nav() {
   const [narrow, setNarrow] = useState(false);
@@ -56,15 +67,28 @@ export default function Nav() {
         {!narrow && (
           <div className="flex items-center gap-8 flex-shrink-0">
             <div className="flex items-center gap-8">
-              {NAV_LINKS.map((label) => (
-                <button
-                  key={label}
-                  onClick={() => goSection(label.toLowerCase())}
-                  className="bg-transparent border-none p-0 cursor-pointer font-body text-sm tracking-[0.02em] text-text-muted whitespace-nowrap flex-shrink-0 transition-colors duration-200 hover:text-text"
-                >
-                  {label}
-                </button>
-              ))}
+              {NAV_LINKS.map(({ label, href }) =>
+                href ? (
+                  <Link
+                    key={label}
+                    href={href}
+                    onClick={() => setMenuOpen(false)}
+                    className={`font-body text-sm tracking-[0.02em] whitespace-nowrap flex-shrink-0 transition-colors duration-200 hover:text-text ${
+                      pathname === href ? "text-text" : "text-text-muted"
+                    }`}
+                  >
+                    {label}
+                  </Link>
+                ) : (
+                  <button
+                    key={label}
+                    onClick={() => goSection(label.toLowerCase())}
+                    className="bg-transparent border-none p-0 cursor-pointer font-body text-sm tracking-[0.02em] text-text-muted whitespace-nowrap flex-shrink-0 transition-colors duration-200 hover:text-text"
+                  >
+                    {label}
+                  </button>
+                )
+              )}
             </div>
             <a
               href="mailto:rahulbabu.moka@gmail.com"
@@ -88,15 +112,28 @@ export default function Nav() {
 
       {narrow && menuOpen && (
         <div className="bg-surface border-t border-border px-6 pt-2 pb-6 flex flex-col gap-5">
-          {NAV_LINKS.map((label) => (
-            <button
-              key={label}
-              onClick={() => goSection(label.toLowerCase())}
-              className="bg-transparent border-none p-0 text-left cursor-pointer font-body text-base text-text-muted transition-colors duration-200 hover:text-accent"
-            >
-              {label}
-            </button>
-          ))}
+          {NAV_LINKS.map(({ label, href }) =>
+            href ? (
+              <Link
+                key={label}
+                href={href}
+                onClick={() => setMenuOpen(false)}
+                className={`font-body text-base transition-colors duration-200 hover:text-accent ${
+                  pathname === href ? "text-text" : "text-text-muted"
+                }`}
+              >
+                {label}
+              </Link>
+            ) : (
+              <button
+                key={label}
+                onClick={() => goSection(label.toLowerCase())}
+                className="bg-transparent border-none p-0 text-left cursor-pointer font-body text-base text-text-muted transition-colors duration-200 hover:text-accent"
+              >
+                {label}
+              </button>
+            )
+          )}
           <a
             href="mailto:rahulbabu.moka@gmail.com"
             className="text-sm px-4 py-2 border border-accent text-accent self-start whitespace-nowrap"

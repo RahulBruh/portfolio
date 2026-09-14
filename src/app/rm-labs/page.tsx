@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import { PROJECTS } from "@/data/projects";
+import RmLabsDemoFrame from "@/components/project-detail/RmLabsDemoFrame";
 
 const project = PROJECTS.find((p) => p.id === "rm-labs")!;
 
@@ -23,14 +24,7 @@ export default function RmLabsPage() {
         Ask your own documents. Get answers you can trace.
       </p>
 
-      <div className="border border-border bg-surface p-2 md:p-3 mb-4">
-        <iframe
-          src="/rm-labs-demo.html"
-          title="RM Labs interactive demo"
-          className="w-full h-[760px] max-h-[85vh] border-0 bg-white"
-          loading="lazy"
-        />
-      </div>
+      <RmLabsDemoFrame />
       <div className="flex justify-end mb-16">
         <a
           href="/rm-labs-demo.html"

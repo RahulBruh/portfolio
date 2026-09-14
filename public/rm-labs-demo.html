@@ -976,6 +976,21 @@ body{
 
   updateCount();
   play();
+
+  if(window.parent !== window){
+    var lastH = 0;
+    var report = function(){
+      var h = Math.ceil(document.body.getBoundingClientRect().height);
+      if(Math.abs(h - lastH) > 2){
+        lastH = h;
+        window.parent.postMessage({ type:"rm-labs-demo-height", height:h }, "*");
+      }
+    };
+    report();
+    if(window.ResizeObserver) new ResizeObserver(report).observe(document.body);
+    window.addEventListener("resize", report);
+    setInterval(report, 800);
+  }
 })();
 </script>
 </body>
