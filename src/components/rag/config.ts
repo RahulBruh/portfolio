@@ -1,5 +1,5 @@
 /**
- * Configuration for the AI Services page (`/RAG`).
+ * Configuration for the AI Services page (`/rag`).
  *
  * These mirror the three props the design prototype exposed as editable tweaks.
  * They are plain constants here because nothing on the page needs to vary them

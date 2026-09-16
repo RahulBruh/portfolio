@@ -13,7 +13,7 @@ const NAV_LINKS: NavLink[] = [
   { label: "Experience" },
   { label: "Projects" },
   { label: "About" },
-  { label: "AI Services", href: "/RAG" },
+  { label: "AI Services", href: "/rag" },
   { label: "Testimonials" },
   { label: "Contact" },
 ];

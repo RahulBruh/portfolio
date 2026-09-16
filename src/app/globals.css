@@ -44,7 +44,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* AI Services page (/RAG) — its own "Nocturne" palette (dark navy/purple,
+/* AI Services page (/rag) — its own "Nocturne" palette (dark navy/purple,
    Inter-only type), scoped to this one route via .rag so the rest of the
    site keeps the cyan/Playfair/JetBrains Mono system above. Overriding the
    shared token names lets this page reuse the ordinary bg-surface,
@@ -95,7 +95,7 @@ body {
   outline-offset: 2px;
 }
 
-/* The /RAG service accordion sets its transitions inline so each property keeps
+/* The /rag service accordion sets its transitions inline so each property keeps
    its own duration; !important is what lets this override them. */
 @media (prefers-reduced-motion: reduce) {
   [data-rag-motion] {
