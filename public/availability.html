@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rahul Moka – Availability</title>
+<style>
+  :root{
+    --bg:#0f172a; --card:#ffffff; --ink:#0f172a; --muted:#64748b;
+    --accent:#6366f1; --accent2:#06b6d4; --free:#10b981; --free-bg:#ecfdf5;
+    --busy:#e2e8f0; --line:#e5e7eb;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:linear-gradient(160deg,#0f172a 0%,#1e1b4b 55%,#312e81 100%);
+    min-height:100vh; color:var(--ink); padding:40px 16px 56px;
+  }
+  .wrap{max-width:860px;margin:0 auto}
+  header{text-align:center;color:#fff;margin-bottom:32px}
+  .badge{
+    display:inline-block;padding:6px 14px;border-radius:999px;
+    background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
+    font-size:12px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:16px
+  }
+  h1{font-size:clamp(30px,6vw,46px);font-weight:800;letter-spacing:-.02em;line-height:1.1}
+  h1 span{background:linear-gradient(90deg,var(--accent2),#a5b4fc);-webkit-background-clip:text;background-clip:text;color:transparent}
+  header p{margin-top:12px;color:#c7d2fe;font-size:16px}
+
+  .highlight{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:24px
+  }
+  .hl{
+    background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);
+    border-radius:16px;padding:16px 18px;color:#fff
+  }
+  .hl small{display:block;color:#a5b4fc;font-size:12px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+  .hl strong{font-size:18px}
+
+  .card{
+    background:var(--card);border-radius:20px;padding:22px 24px;margin-bottom:14px;
+    box-shadow:0 10px 30px rgba(0,0,0,.25);
+  }
+  .card.open{border:2px solid var(--free);background:linear-gradient(180deg,#fff,var(--free-bg))}
+  .row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+  .day{font-size:20px;font-weight:700}
+  .tag{
+    font-size:12px;font-weight:700;padding:5px 12px;border-radius:999px;
+    background:var(--free-bg);color:#047857;border:1px solid #a7f3d0
+  }
+  .tag.partial{background:#eef2ff;color:#4338ca;border-color:#c7d2fe}
+
+  .bar{position:relative;height:30px;border-radius:10px;background:var(--free);overflow:hidden}
+  .bar .class{
+    position:absolute;top:0;bottom:0;
+    background:repeating-linear-gradient(45deg,#cbd5e1,#cbd5e1 6px,#e2e8f0 6px,#e2e8f0 12px);
+    display:flex;align-items:center;justify-content:center;
+    font-size:11px;font-weight:700;color:#475569;letter-spacing:.04em;
+  }
+  .scale{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:6px}
+
+  .times{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .chip{font-size:14px;padding:7px 12px;border-radius:10px;background:var(--free-bg);color:#065f46;border:1px solid #a7f3d0;font-weight:600}
+  .chip.busy{background:#f1f5f9;color:#64748b;border-color:var(--line);text-decoration:line-through;font-weight:500}
+
+  .legend{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;color:#c7d2fe;font-size:13px;margin:6px 0 22px}
+  .legend i{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-2px;margin-right:6px}
+  .l-free{background:var(--free)}
+  .l-busy{background:repeating-linear-gradient(45deg,#cbd5e1,#cbd5e1 4px,#e2e8f0 4px,#e2e8f0 8px)}
+
+  footer{text-align:center;color:#c7d2fe;font-size:14px;margin-top:28px}
+  footer b{color:#fff}
+  @media(max-width:520px){.card{padding:18px}.day{font-size:18px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="badge">Weekly Availability</div>
+    <h1><span>Rahul Moka</span></h1>
+    <p>Here's when I'm free to work. All times are Central Time (CT).</p>
+  </header>
+
+  <div class="legend">
+    <span><i class="l-free"></i>Available</span>
+    <span><i class="l-busy"></i>In class</span>
+  </div>
+
+  <!-- Timeline spans 7 AM – 10 PM (15 hrs). Class blocks positioned by percentage. -->
+
+  <!-- MONDAY: 12:40–3:45 -> start (5h40/15)=37.78%, width (3h05/15)=20.56% -->
+  <div class="card">
+    <div class="row"><div class="day">Monday</div><span class="tag partial">Partially available</span></div>
+    <div class="bar"><div class="class" style="left:37.78%;width:20.56%">CLASS</div></div>
+    <div class="scale"><span>7 AM</span><span>12 PM</span><span>5 PM</span><span>10 PM</span></div>
+    <div class="times">
+      <span class="chip">Free until 12:40 PM</span>
+      <span class="chip busy">12:40 – 3:45 PM</span>
+      <span class="chip">Free after 3:45 PM</span>
+    </div>
+  </div>
+
+  <!-- TUESDAY: 9:40–2:25 -> start (2h40/15)=17.78%, width (4h45/15)=31.67% -->
+  <div class="card">
+    <div class="row"><div class="day">Tuesday</div><span class="tag partial">Partially available</span></div>
+    <div class="bar"><div class="class" style="left:17.78%;width:31.67%">CLASS</div></div>
+    <div class="scale"><span>7 AM</span><span>12 PM</span><span>5 PM</span><span>10 PM</span></div>
+    <div class="times">
+      <span class="chip">Free until 9:40 AM</span>
+      <span class="chip busy">9:40 AM – 2:25 PM</span>
+      <span class="chip">Free after 2:25 PM</span>
+    </div>
+  </div>
+
+  <!-- WEDNESDAY: same as Monday -->
+  <div class="card">
+    <div class="row"><div class="day">Wednesday</div><span class="tag partial">Partially available</span></div>
+    <div class="bar"><div class="class" style="left:37.78%;width:20.56%">CLASS</div></div>
+    <div class="scale"><span>7 AM</span><span>12 PM</span><span>5 PM</span><span>10 PM</span></div>
+    <div class="times">
+      <span class="chip">Free until 12:40 PM</span>
+      <span class="chip busy">12:40 – 3:45 PM</span>
+      <span class="chip">Free after 3:45 PM</span>
+    </div>
+  </div>
+
+  <!-- THURSDAY: same as Tuesday -->
+  <div class="card">
+    <div class="row"><div class="day">Thursday</div><span class="tag partial">Partially available</span></div>
+    <div class="bar"><div class="class" style="left:17.78%;width:31.67%">CLASS</div></div>
+    <div class="scale"><span>7 AM</span><span>12 PM</span><span>5 PM</span><span>10 PM</span></div>
+    <div class="times">
+      <span class="chip">Free until 9:40 AM</span>
+      <span class="chip busy">9:40 AM – 2:25 PM</span>
+      <span class="chip">Free after 2:25 PM</span>
+    </div>
+  </div>
+
+  <div class="card open">
+    <div class="row"><div class="day">Friday</div><span class="tag">Fully open</span></div>
+    <div class="bar"></div>
+    <div class="scale"><span>7 AM</span><span>12 PM</span><span>5 PM</span><span>10 PM</span></div>
+    <div class="times"><span class="chip">Available all day</span></div>
+  </div>
+
+  <div class="card open">
+    <div class="row"><div class="day">Saturday</div><span class="tag">Fully open</span></div>
+    <div class="bar"></div>
+    <div class="scale"><span>7 AM</span><span>12 PM</span><span>5 PM</span><span>10 PM</span></div>
+    <div class="times"><span class="chip">Available all day</span></div>
+  </div>
+
+  <div class="card open">
+    <div class="row"><div class="day">Sunday</div><span class="tag">Fully open</span></div>
+    <div class="bar"></div>
+    <div class="scale"><span>7 AM</span><span>12 PM</span><span>5 PM</span><span>10 PM</span></div>
+    <div class="times"><span class="chip">Available all day</span></div>
+  </div>
+
+  <footer>
+    Questions or want to schedule something? <b>[your email / phone]</b>
+  </footer>
+
+</div>
+</body>
+</html>
