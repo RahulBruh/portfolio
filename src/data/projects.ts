@@ -38,6 +38,58 @@ export const PROJECTS: Project[] = [
     ],
   },
   {
+    id: "skills-support-agent",
+    title: "Skills-Based Support Agent",
+    tag: "Agentic AI · Oct 2026",
+    shortDesc:
+      "A player-support triage agent where every domain is a declarative SKILL.md file — add or change a support area without touching code.",
+    description:
+      "A plug-and-play player-support triage agent built with LangGraph and Claude. Each support domain (billing, account recovery, bug reports, connectivity) is a markdown SKILL.md file that defines its intake questions, business rules, escalation policy, tool allow-list and persona; the graph itself holds no domain knowledge. Requirements came first: a BRD, user stories, workflow maps and design decisions were committed before any code, and the backlog was tracked as GitHub Issues and milestones.",
+    img: "/assets/skills-support-agent.svg",
+    tech: [
+      "LangGraph",
+      "Claude API",
+      "Python",
+      "MCP (FastMCP)",
+      "Pydantic",
+      "GitHub Actions",
+      "uv",
+    ],
+    github: "https://github.com/RahulBruh/skills-support-agent",
+    highlights: [
+      "Designed a domain-agnostic LangGraph pipeline (route → intake → ask → act → decide) where all business logic lives in declarative SKILL.md files; the connectivity domain was added in a single 25-line markdown file with zero Python changes.",
+      "Cut tokens per task by 72% (26,468 → 7,400) and cost per task by 65% ($0.0292 → $0.0102) by rewriting skills concisely and switching to progressive disclosure, where the router sees only skill descriptions and the full skill loads after routing, while decision accuracy held at 86.8% → 92.5% across 53 labeled cases (overlapping 95% CIs, so no regression rather than a proven gain).",
+      "Exposed ticket, account, purchase-history, knowledge-base and service-status lookups as five shared MCP tools, with each skill's allow-list enforced by the engine; the same server works with Claude Desktop, Claude Code or any MCP client.",
+      "Wrote the planning artifacts before code: a business requirements document, user stories, workflow maps and ADRs, with work tracked through 15 GitHub issues across milestones.",
+    ],
+  },
+  {
+    id: "agent-eval-harness",
+    title: "Agent Eval Harness",
+    tag: "AI Evaluation · Oct 2026",
+    shortDesc:
+      "A benchmarking CLI that runs labeled tasks across agent configs and reports accuracy, tokens, cost and latency — with a regression gate for CI.",
+    description:
+      "A benchmarking harness (the `evalh` CLI) that runs the same 60 hand-labeled triage cases across a matrix of model × skill set × context-loading mode, scores each decision deterministically, and reports accuracy with Wilson 95% intervals alongside tokens, cost and latency per task. It evaluates the skills-support-agent and produced the numbers behind its 72% token reduction, including a 2×2 ablation that separates the effect of each change.",
+    img: "/assets/agent-eval-harness.svg",
+    tech: [
+      "Python",
+      "Claude API",
+      "Pydantic",
+      "YAML datasets",
+      "GitHub Actions",
+      "pytest",
+      "uv",
+    ],
+    github: "https://github.com/RahulBruh/agent-eval-harness",
+    highlights: [
+      "Built a 60-case labeled dataset spanning billing, account recovery, bug reports, connectivity, out-of-scope, multi-intent, multi-turn and prompt-injection cases, with labels derived from skill rules and mock backend data (never model output) and a changelog recording every label change.",
+      "Ran a 2×2 ablation on Claude Haiku 4.5 isolating the two optimizations: progressive loading alone cut tokens 61.6%, concise skill files alone 49.9%, and both together 72.0% — nearly all of it input tokens, with output flat.",
+      "Used the evals to find real problems: a routing regression introduced by the token optimization (billing questions like “Do you accept PayPal?” fell through to human escalation), ambiguous business rules tightened before any model run, and a 3-case run-to-run swing at temperature 0 that motivated reporting every accuracy figure with a confidence interval.",
+      "Implemented run / compare / baseline / gate / cases commands with an on-disk cache keyed by an agent code + skills + data fingerprint, results exported as JSON, Markdown and HTML reports, and a gate command that exits non-zero on regression for use as a pull-request check.",
+    ],
+  },
+  {
     id: "stripe-self-healing-api",
     title: "Self-Maintaining Stripe API",
     tag: "Multi-Agent AI · Aug 2026",

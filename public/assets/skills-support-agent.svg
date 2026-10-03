@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="675" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#080C10"/>
+      <stop offset="1" stop-color="#0F1A22"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <g font-family="'JetBrains Mono', Consolas, monospace" font-size="20">
+    <!-- skill files -->
+    <g fill="#0F1419" stroke="#1E2A33" stroke-width="2">
+      <rect x="150" y="170" width="230" height="56" rx="6"/>
+      <rect x="150" y="246" width="230" height="56" rx="6"/>
+      <rect x="150" y="322" width="230" height="56" rx="6"/>
+      <rect x="150" y="398" width="230" height="56" rx="6"/>
+    </g>
+    <g fill="#8FA3B4">
+      <text x="172" y="205">billing/SKILL.md</text>
+      <text x="172" y="281">recovery/SKILL.md</text>
+      <text x="172" y="357">bug-report/SKILL.md</text>
+      <text x="172" y="433">connectivity/...</text>
+    </g>
+    <!-- connectors -->
+    <g stroke="#00D4FF" stroke-opacity="0.45" stroke-width="2" fill="none">
+      <path d="M380 198 C450 198 450 312 520 312"/>
+      <path d="M380 274 C450 274 450 312 520 312"/>
+      <path d="M380 350 C450 350 450 312 520 312"/>
+      <path d="M380 426 C450 426 450 312 520 312"/>
+      <path d="M760 312 L840 312"/>
+    </g>
+    <!-- graph -->
+    <rect x="520" y="232" width="240" height="160" rx="10" fill="#0B0F14" stroke="#00D4FF" stroke-width="2"/>
+    <text x="640" y="280" text-anchor="middle" fill="#00D4FF" font-size="22">LangGraph</text>
+    <g fill="#E8EEF3" font-size="17" text-anchor="middle">
+      <text x="640" y="318">route → intake → act</text>
+      <text x="640" y="348">→ decide</text>
+    </g>
+    <!-- result -->
+    <rect x="840" y="252" width="220" height="120" rx="10" fill="#0F1419" stroke="#1E2A33" stroke-width="2"/>
+    <g font-size="17">
+      <text x="862" y="290" fill="#8FA3B4">skill  billing</text>
+      <text x="862" y="320" fill="#8FA3B4">priority  P2</text>
+      <text x="862" y="350" fill="#00D4FF">escalate  true</text>
+    </g>
+  </g>
+  <text x="600" y="540" text-anchor="middle" font-family="'Segoe UI', Helvetica, Arial, sans-serif" font-size="46" font-weight="600" letter-spacing="1" fill="#E8EEF3">skills-support-agent</text>
+  <text x="600" y="584" text-anchor="middle" font-family="'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#8FA3B4">Add a support domain by writing a markdown file, not code.</text>
+</svg>
