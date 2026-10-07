@@ -1,0 +1,395 @@
+[
+  {
+    "bullets": [
+      "Built shared backend tool services (ticket, account, purchase, knowledge-base, service-status) exposed via MCP and reused across skills, with per-skill least-privilege allow-lists enforced by the engine",
+      "Designed an extensible, declarative architecture where each support domain is a SKILL.md file; added a new domain with zero code changes (one 25-line markdown file)",
+      "Ran the full SDLC in an Agile workflow: wrote a BRD, user stories and workflow maps, then delivered a 15-story backlog across 4 milestones tracked in GitHub Issues"
+    ],
+    "category": "Machine Learning / AI",
+    "createdAt": 1791330000000,
+    "dates": "Oct. 2026",
+    "example": false,
+    "link": "https://github.com/RahulBruh/skills-support-agent",
+    "role": "Solo developer",
+    "summary": "Plug-and-play support-triage agent where each domain is a declarative SKILL.md file backed by shared MCP tools.",
+    "tech": [
+      "Python",
+      "LangGraph",
+      "Claude API",
+      "MCP",
+      "LLM",
+      "Agile"
+    ],
+    "title": "Skills-Driven Support Agent",
+    "type": "Personal",
+    "updatedAt": 1791330000000,
+    "id": "skills-support-agent"
+  },
+  {
+    "bullets": [
+      "Built an automated test harness with 60 labeled test cases comparing variants on accuracy (with 95% confidence intervals), token usage, cost and latency",
+      "Cut tokens per task by 72% and cost by 65% while raising accuracy from 86.8% to 92.5% by restructuring instructions and loading context only when needed",
+      "Added a regression gate to the CI/CD pipeline (GitHub Actions) so every prompt or skill change is validated before merge and can't silently regress accuracy or cost"
+    ],
+    "category": "Machine Learning / AI",
+    "createdAt": 1791329999000,
+    "dates": "Oct. 2026",
+    "example": false,
+    "link": "https://github.com/RahulBruh/agent-eval-harness",
+    "role": "Solo developer",
+    "summary": "CLI eval harness that benchmarks agent variants on accuracy, tokens, cost and latency, with a CI regression gate.",
+    "tech": [
+      "Python",
+      "pytest",
+      "GitHub Actions",
+      "CI/CD",
+      "Claude API",
+      "Prompt Engineering",
+      "Statistics"
+    ],
+    "title": "Agent Evaluation & Benchmarking Harness",
+    "type": "Personal",
+    "updatedAt": 1791329999000,
+    "id": "agent-eval-harness"
+  },
+  {
+    "bullets": [
+      "Built a GraphRAG pipeline over a full Computer Organization & Architecture textbook, using an LLM to extract entities (pipelines, cache hierarchies, instruction formats) and their relationships into a knowledge graph",
+      "Applied community detection to cluster related concepts into hierarchical summaries, enabling both local fact lookup and global cross-chapter questions that vector-only RAG struggles with",
+      "Grounded every answer in the source with chapter- and section-level citations, so responses to exam-style questions come from the textbook rather than the model's general knowledge"
+    ],
+    "category": "Machine Learning / AI",
+    "createdAt": 1791329998000,
+    "dates": "Sep. 2026",
+    "example": false,
+    "link": "https://github.com/RahulBruh/graphrag-quickstart",
+    "role": "Solo developer",
+    "summary": "GraphRAG pipeline over a full Computer Organization & Architecture textbook with cited answers.",
+    "tech": [
+      "Python",
+      "LLM",
+      "RAG",
+      "GraphRAG",
+      "Knowledge Graphs",
+      "Ollama"
+    ],
+    "title": "Textbook GraphRAG Assistant",
+    "type": "Personal",
+    "updatedAt": 1791329998000,
+    "id": "textbook-graphrag"
+  },
+  {
+    "bullets": [
+      "At Lincoln Financial's CodeLinc 11 hackathon, co-built a voice-enabled AI assistant (3-person team) that turns a natural conversation into a personalized life insurance coverage estimate",
+      "Explained the coverage math visually, compared term vs. whole life, and let users run \"what-if\" scenarios before downloading a summary; refined the product with feedback from Lincoln Financial mentors"
+    ],
+    "category": "Machine Learning / AI",
+    "createdAt": 1791329997000,
+    "dates": "2026",
+    "example": false,
+    "link": "https://github.com/frsfzl/codelinc11",
+    "role": "3-person team",
+    "summary": "Voice-enabled AI assistant that turns a conversation into a personalized life insurance coverage estimate (Lincoln Financial CodeLinc 11).",
+    "tech": [
+      "React",
+      "Next.js",
+      "ElevenLabs",
+      "OpenAI API",
+      "LLM"
+    ],
+    "title": "Linc: AI Life Insurance Assistant",
+    "type": "Hackathon",
+    "updatedAt": 1791329997000,
+    "id": "linc-codelinc11"
+  },
+  {
+    "bullets": [
+      "Built a FastAPI + SQLite backend that generates a fixed daily schedule and runs a Claude-powered agent twice a day to fold new coursework into it",
+      "Automated Canvas LMS access with Playwright browser automation and a saved session, since API access wasn't available",
+      "Built an Expo (React Native + TypeScript) mobile app with a day timeline, calendar view, completion notes and push notifications, deployed against a VPS with systemd timers and Caddy"
+    ],
+    "category": "Full-Stack",
+    "createdAt": 1791329996000,
+    "dates": "Aug. 2026",
+    "example": false,
+    "link": "https://github.com/RahulBruh/scheduler-app",
+    "role": "Solo developer",
+    "summary": "Scheduling app whose agent scrapes Canvas twice a day and uses Claude to fold new assignments into a fixed daily schedule.",
+    "tech": [
+      "Python",
+      "FastAPI",
+      "SQLite",
+      "Playwright",
+      "Claude API",
+      "React Native",
+      "Expo",
+      "TypeScript",
+      "pytest"
+    ],
+    "title": "Personal Adaptive Scheduler",
+    "type": "Personal",
+    "updatedAt": 1791329996000,
+    "id": "scheduler-app"
+  },
+  {
+    "bullets": [
+      "Fine-tuned SDXL base 1.0 with a rank-8 LoRA on a 20-image captioned dataset, fitting training on an 8GB-class GPU with bf16, gradient checkpointing and 8-bit Adam",
+      "Packaged inference as a Docker worker on a RunPod serverless endpoint and wired it into a live image-generation demo on my portfolio site, plus a Gradio demo"
+    ],
+    "category": "Machine Learning / AI",
+    "createdAt": 1791329995000,
+    "dates": "Aug. 2026",
+    "example": false,
+    "link": "https://github.com/RahulBruh/sdxl-cyberpunk-lora",
+    "role": "Solo developer",
+    "summary": "LoRA fine-tune of Stable Diffusion XL for a cyberpunk visual style, served from a serverless GPU endpoint.",
+    "tech": [
+      "Python",
+      "PyTorch",
+      "Hugging Face",
+      "Diffusers",
+      "PEFT",
+      "Accelerate",
+      "Gradio",
+      "Docker",
+      "Computer Vision"
+    ],
+    "title": "SDXL Cyberpunk Style LoRA",
+    "type": "Personal",
+    "updatedAt": 1791329995000,
+    "id": "sdxl-cyberpunk-lora"
+  },
+  {
+    "bullets": [
+      "Built a Next.js + TypeScript + Tailwind portfolio with project, resume and RAG demo pages",
+      "Added a server-side API route that calls a RunPod serverless GPU endpoint to generate images from my SDXL LoRA live in the browser"
+    ],
+    "category": "Frontend",
+    "createdAt": 1791329994000,
+    "dates": "Aug. 2026 – Oct. 2026",
+    "example": false,
+    "link": "https://rahulmoka.com",
+    "role": "Solo developer",
+    "summary": "rahulmoka.com: portfolio with project pages, resume and live AI demos.",
+    "tech": [
+      "Next.js",
+      "React",
+      "TypeScript",
+      "Tailwind"
+    ],
+    "title": "Personal Portfolio Website",
+    "type": "Personal",
+    "updatedAt": 1791329994000,
+    "id": "portfolio-site"
+  },
+  {
+    "bullets": [
+      "Built a full-stack internal project-management platform (Cork-Board) with Ruby on Rails, React and a SQL database, designing the REST APIs that centralized 7 projects across 4 clients",
+      "Built an MCP server that automated project-management and client-communication workflows for the team, improving efficiency by an estimated 30%",
+      "Shipped a Dockerized controller service on a Raspberry Pi 5 for a client's Oat Foundry split-flap display, with remote SSH access for agent-driven updates"
+    ],
+    "category": "Full-Stack",
+    "createdAt": 1791329993000,
+    "dates": "May 2026 – Jul. 2026",
+    "example": false,
+    "link": "",
+    "role": "Software Engineer Intern, Full Stack",
+    "summary": "Full-stack internship: internal project-management platform, MCP workflow automation, and a client hardware controller.",
+    "tech": [
+      "Ruby on Rails",
+      "React",
+      "SQL",
+      "REST API",
+      "MCP",
+      "Docker",
+      "Raspberry Pi",
+      "SSH",
+      "Linux"
+    ],
+    "title": "Triad Tech",
+    "type": "Internship",
+    "updatedAt": 1791329993000,
+    "id": "triad-tech-intern"
+  },
+  {
+    "bullets": [
+      "Built RAG pipelines for finance and marketing clients, unifying scanned physical documents (OCR), public web sources, and internal databases into a single VPC-hosted corpus with semantic chunking, embedding generation, and hybrid dense/BM25 retrieval over a pgvector store",
+      "Implemented custom MCP servers (Python SDK, stdio + SSE transports) exposing retrieval and domain tooling to LLM agents, so numeric outputs were computed in code rather than generated by the model",
+      "Shipped the app layer end-to-end: a FastAPI + React interface with streaming responses, inline source citations, and role-scoped access, deployed to client-owned private cloud so no proprietary data left their perimeter"
+    ],
+    "category": "Machine Learning / AI",
+    "createdAt": 1791329992000,
+    "dates": "Jul. 2026",
+    "example": false,
+    "link": "",
+    "role": "",
+    "summary": "Private-cloud RAG and MCP stack for finance and marketing clients.",
+    "tech": [
+      "Python",
+      "RAG",
+      "MCP",
+      "FastAPI",
+      "React",
+      "PostgreSQL",
+      "pgvector",
+      "OCR",
+      "LLM"
+    ],
+    "title": "Private AI Infrastructure",
+    "type": "Work",
+    "updatedAt": 1791329992000,
+    "id": "private-ai-infra"
+  },
+  {
+    "bullets": [
+      "Built a C++ remote development system using Boost.Asio and PTY/ConPTY to expose a live terminal session on a home machine, controllable from anywhere via a Raspberry Pi acting as an always-on gateway",
+      "Configured Wake-on-LAN and an iOS Shortcut to remotely power on the home PC from sleep, then connected via Termius over SSH from an iPhone, including launching Claude Code to work on projects remotely",
+      "Integrated the Apple Watch (HealthKit) API to log heart rate and calories, and the Canvas LMS API to verify assignment submission status and retrieve turned-in files",
+      "Integrated Claude API to compare submitted assignment files against instructor-provided directions, flagging missing or incomplete requirements before grading"
+    ],
+    "category": "Cloud & DevOps",
+    "createdAt": 1791329991000,
+    "dates": "Jul. 2026",
+    "example": false,
+    "link": "https://github.com/RahulBruh/wol-trigger",
+    "role": "Solo developer",
+    "summary": "Raspberry Pi gateway that wakes and remote-controls a home PC, plus HealthKit and Canvas automations.",
+    "tech": [
+      "C++",
+      "Python",
+      "FastAPI",
+      "Raspberry Pi",
+      "SSH",
+      "Linux",
+      "Claude API"
+    ],
+    "title": "Remote Dev & Personal Automation System",
+    "type": "Personal",
+    "updatedAt": 1791329991000,
+    "id": "remote-dev-pi"
+  },
+  {
+    "bullets": [
+      "Built a client's jewelry storefront with React, Vite and React Router",
+      "Integrated Stripe payments through an Express server that creates checkout sessions with the secret key kept server-side"
+    ],
+    "category": "Full-Stack",
+    "createdAt": 1791329990000,
+    "dates": "Feb. 2026 – Mar. 2026",
+    "example": false,
+    "link": "https://github.com/RahulBruh/Vintage-Vault-Website",
+    "role": "Solo developer",
+    "summary": "Online jewelry store built for a client, with Stripe checkout.",
+    "tech": [
+      "React",
+      "Vite",
+      "Node.js",
+      "Express",
+      "Stripe",
+      "JavaScript"
+    ],
+    "title": "Vintage Vault E-commerce Site",
+    "type": "Freelance",
+    "updatedAt": 1791329990000,
+    "id": "vintage-vault"
+  },
+  {
+    "bullets": [
+      "Architected an AI procurement platform using React.js, Tailwind CSS, PostgreSQL, and Claude API to link Memphis authorities with 20,000+ small businesses, expanding local business contract win rate by 12% and addressing the $41 million that leaves the Memphis community annually via outsourced city contracts",
+      "Engineered the back-end with Flask, Google Places API, and Yelp API, built by a 4-person team in 18 hours under a strict 24-hour hackathon deadline"
+    ],
+    "category": "Full-Stack",
+    "createdAt": 1791329989000,
+    "dates": "Nov. 2025",
+    "example": false,
+    "link": "",
+    "role": "4-person team (Hack Memphis)",
+    "summary": "AI procurement platform linking Memphis authorities with local small businesses.",
+    "tech": [
+      "React",
+      "Tailwind",
+      "PostgreSQL",
+      "Flask",
+      "Python",
+      "Claude API",
+      "REST API"
+    ],
+    "title": "Civic Source",
+    "type": "Hackathon",
+    "updatedAt": 1791329989000,
+    "id": "civic-source"
+  },
+  {
+    "bullets": [
+      "Parsed and preprocessed 5 GB of OpenStreetMap road network data for downtown Nashville, transforming verbose XML into a memory-efficient adjacency list for A* pathfinding",
+      "Implemented A* and Dijkstra's algorithms for pathfinding, decreasing search time by 35% for delivery routes",
+      "Built a unit testing suite achieving a 98% test case pass rate and found the root cause of 3 major performance bottlenecks in the pathfinding code"
+    ],
+    "category": "Other",
+    "createdAt": 1791329988000,
+    "dates": "Sep. 2025",
+    "example": false,
+    "link": "",
+    "role": "",
+    "summary": "Pathfinding over real downtown Nashville road data with A* and Dijkstra.",
+    "tech": [
+      "Algorithms",
+      "OpenStreetMap",
+      "Unit Testing"
+    ],
+    "title": "A* Route Search",
+    "type": "Personal",
+    "updatedAt": 1791329988000,
+    "id": "astar-route-search"
+  },
+  {
+    "bullets": [
+      "Developed RESTful APIs for the poker platform using Django, designed to scale under high request volumes behind AWS Elastic Load Balancing",
+      "Implemented real-time game logic with Celery and Redis, enabling five concurrent game rooms without blocking the server during peak load",
+      "Optimized UI performance with a static pipeline for card images and AJAX/Fetch API updates, reducing UI latency by 30%"
+    ],
+    "category": "Full-Stack",
+    "createdAt": 1791329987000,
+    "dates": "Jun. 2025",
+    "example": false,
+    "link": "",
+    "role": "",
+    "summary": "Multiplayer poker site with real-time game rooms.",
+    "tech": [
+      "Python",
+      "Django",
+      "Celery",
+      "Redis",
+      "AWS",
+      "REST API",
+      "JavaScript"
+    ],
+    "title": "Poker Full-Stack Website",
+    "type": "Personal",
+    "updatedAt": 1791329987000,
+    "id": "poker-fullstack"
+  },
+  {
+    "bullets": [
+      "Automated contract generation for 30+ clients via a Next.js, React, and Node.js pipeline, saving 30 minutes per contract by parsing form state into server-side templates and PDFs",
+      "Refactored a complex React codebase, fixing 20 critical bugs and addressing performance issues in an unorganized project"
+    ],
+    "category": "Full-Stack",
+    "createdAt": 1791329986000,
+    "dates": "Jan. 2025 – Present",
+    "example": false,
+    "link": "",
+    "role": "Software Engineer Intern",
+    "summary": "Contract-generation automation and React codebase cleanup for a consulting firm.",
+    "tech": [
+      "Next.js",
+      "React",
+      "Node.js",
+      "JavaScript"
+    ],
+    "title": "West TN Consulting",
+    "type": "Internship",
+    "updatedAt": 1791329986000,
+    "id": "west-tn-consulting"
+  }
+]
