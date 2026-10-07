@@ -180,6 +180,7 @@ button.tag:hover { border-color: var(--accent); }
       <button class="btn" id="import-btn" type="button">Import JSON</button>
       <button class="btn" id="export-btn" type="button">Export JSON</button>
       <button class="btn primary" id="add-btn" type="button">+ Add project</button>
+      <form method="post" action="/api/auth/logout" style="margin:0"><button class="btn ghost" type="submit">Sign out</button></form>
       <input type="file" id="import-file" accept="application/json,.json" hidden>
     </div>
   </header>
@@ -311,9 +312,9 @@ button.tag:hover { border-color: var(--accent); }
   const CATEGORIES = ["Frontend", "Backend", "Full-Stack", "Mobile", "Data Analysis", "Machine Learning / AI", "Data Engineering", "Cloud & DevOps", "Other"];
   const TYPES = ["Personal", "Academic", "Work", "Internship", "Hackathon", "Open Source", "Freelance"];
 
-  // Seed data is optional: if /jobapply-projects.json exists it is the starting set,
-  // otherwise the bank starts empty. Edits are kept in this browser's localStorage.
-  const SEED_URL = "/jobapply-projects.json";
+  // Seed data comes from the signed-in-only /jobapply/projects route; if it fails
+  // the bank starts empty. Edits are kept in this browser's localStorage.
+  const SEED_URL = "/jobapply/projects";
   const STORE_KEY = "jobapply.projects.v1";
 
   const COMMON = ["JavaScript","TypeScript","React","Next.js","Vue","Angular","HTML","CSS","Tailwind","Redux","Node.js","Express","Python","Django","Flask","FastAPI","Java","Spring","C#",".NET","Golang","Rust","C++","SQL","PostgreSQL","MySQL","SQLite","MongoDB","Redis","GraphQL","REST API","AWS","Azure","GCP","Docker","Kubernetes","Terraform","CI/CD","GitHub Actions","Git","Linux","pandas","NumPy","scikit-learn","TensorFlow","PyTorch","Machine Learning","Deep Learning","NLP","LLM","Computer Vision","Tableau","Power BI","Excel","Spark","Airflow","Kafka","Snowflake","dbt","ETL","Statistics","Swift","Kotlin","React Native","Flutter","Firebase","Jest","Unit Testing","Agile","Figma","Data Visualization","A/B Testing","Looker","BigQuery","Hadoop","Microservices","Matplotlib","Jupyter","Selenium","OAuth","WebSockets","Supabase","Vercel"];
