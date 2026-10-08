@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
     httpOnly: true,
     secure: request.nextUrl.protocol === "https:",
     sameSite: "lax",
-    path: "/api/auth/google",
+    path: CALLBACK_PATH,
     maxAge: 600,
   });
   return res;

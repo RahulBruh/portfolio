@@ -10,8 +10,6 @@ import {
   safeNext,
 } from "@/lib/jobapplyAuth";
 
-export const runtime = "nodejs";
-
 type IdTokenClaims = {
   iss?: string;
   aud?: string;
@@ -21,16 +19,17 @@ type IdTokenClaims = {
 };
 
 /**
- * Google redirects here with ?code&state. We check state against the cookie set
+ * Google redirects back to CALLBACK_PATH (/jobapply) with ?code&state, and that
+ * route hands the request here. We check state against the cookie set
  * by /api/auth/google, swap the code for tokens server-to-server, and read the
  * ID token's claims. The ID token comes straight from Google's token endpoint
  * over TLS, so its signature doesn't need separate verification (OIDC Core 3.1.3.7).
  */
-export async function GET(request: NextRequest) {
+export async function handleGoogleCallback(request: NextRequest) {
   const origin = request.nextUrl.origin;
   const fail = (reason: string) => {
     const res = NextResponse.redirect(`${origin}/jobapply?error=${reason}`);
-    res.cookies.delete({ name: STATE_COOKIE, path: "/api/auth/google" });
+    res.cookies.delete({ name: STATE_COOKIE, path: CALLBACK_PATH });
     return res;
   };
 
@@ -72,8 +71,9 @@ export async function GET(request: NextRequest) {
   if (!issuerOk || claims.aud !== config.clientId || !fresh) return fail("token");
   if (claims.email?.toLowerCase() !== ALLOWED_EMAIL || claims.email_verified !== true) return fail("denied");
 
+  // safeNext never returns a URL carrying ?code, so this redirect can't loop.
   const res = NextResponse.redirect(origin + safeNext(saved.next ?? null));
-  res.cookies.delete({ name: STATE_COOKIE, path: "/api/auth/google" });
+  res.cookies.delete({ name: STATE_COOKIE, path: CALLBACK_PATH });
   res.cookies.set(SESSION_COOKIE, createSessionToken(ALLOWED_EMAIL), {
     httpOnly: true,
     secure: request.nextUrl.protocol === "https:",

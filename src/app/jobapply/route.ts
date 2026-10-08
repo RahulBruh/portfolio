@@ -1,6 +1,7 @@
 import { readFile } from "fs/promises";
 import path from "path";
 import { NextResponse, type NextRequest } from "next/server";
+import { handleGoogleCallback } from "@/lib/googleCallback";
 import { SESSION_COOKIE, verifySessionToken } from "@/lib/jobapplyAuth";
 
 export const runtime = "nodejs";
@@ -19,9 +20,13 @@ const ERRORS: Record<string, string> = {
   state: "The sign-in link expired. Try again.",
   token: "Google sign-in failed. Try again.",
   config: "Sign-in isn't configured on this deployment yet.",
+  access_denied: "Sign-in was cancelled.",
 };
 
 export async function GET(request: NextRequest) {
+  // This route doubles as the OAuth redirect URI registered with Google.
+  if (request.nextUrl.searchParams.has("code")) return handleGoogleCallback(request);
+
   const session = verifySessionToken(request.cookies.get(SESSION_COOKIE)?.value);
   if (session) {
     return new NextResponse(await readFile(PAGE_PATH, "utf8"), { headers: HEADERS });

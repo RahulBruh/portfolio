@@ -14,7 +14,8 @@ export const SESSION_COOKIE = "jobapply_session";
 export const STATE_COOKIE = "jobapply_oauth_state";
 export const SESSION_TTL_SECONDS = 60 * 60 * 24 * 7;
 
-export const CALLBACK_PATH = "/api/auth/google/callback";
+// Must match the redirect URI registered on the Google OAuth client exactly.
+export const CALLBACK_PATH = "/jobapply";
 
 type Session = { email: string; exp: number };
 
