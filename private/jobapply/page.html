@@ -135,6 +135,27 @@ button.tag:hover { border-color: var(--accent); }
 .actions { display: flex; gap: 2px; }
 .confirm { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 13.5px; }
 
+/* Skills-to-build taskboard: three status columns of things no project covers yet */
+.plans { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin-bottom: 22px; }
+.plans-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 6px 12px; margin-bottom: 12px; }
+.plans-head h2 { font-family: var(--font-display); font-size: 20px; margin: 0; letter-spacing: -0.01em; }
+.plans-head p { margin: 0; color: var(--muted); font-size: 13px; }
+.plan-add { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+.plan-add input { border: 1px solid var(--line); border-radius: 8px; padding: 8px 11px; background: var(--bg); font-size: 14px; min-width: 0; }
+.plan-add #plan-name { flex: 1 1 160px; }
+.plan-add #plan-note { flex: 2 1 220px; }
+.board { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 700px) { .board { grid-template-columns: minmax(0, 1fr); } }
+.col { background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 10px; display: grid; gap: 8px; align-content: start; min-height: 64px; }
+.col h3 { font-family: var(--font-mono); font-size: 11.5px; font-weight: 500; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin: 0 2px 2px; display: flex; justify-content: space-between; }
+.col .none { color: var(--muted); font-size: 13px; margin: 0 2px; }
+.item { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; display: grid; gap: 4px; min-width: 0; }
+.item-top { display: flex; justify-content: space-between; align-items: start; gap: 6px; }
+.item strong { font-weight: 600; font-size: 14px; overflow-wrap: anywhere; }
+.item .note { color: var(--muted); font-size: 13px; overflow-wrap: anywhere; }
+.item .actions .btn { padding: 2px 6px; font-size: 13px; }
+.item .covered { justify-self: start; }
+
 .empty { border: 1px dashed var(--line); border-radius: 12px; padding: 40px 24px; text-align: center; color: var(--muted); }
 .empty h3 { font-family: var(--font-display); color: var(--ink); margin: 0 0 6px; font-size: 20px; }
 .empty p { margin: 0 auto 16px; max-width: 46ch; }
@@ -218,6 +239,19 @@ button.tag:hover { border-color: var(--accent); }
     </aside>
 
     <main>
+      <section class="plans" aria-labelledby="plans-h">
+        <div class="plans-head">
+          <h2 id="plans-h">Skills to build</h2>
+          <p>Tech none of your projects use yet, e.g. Kubernetes or Go.</p>
+        </div>
+        <form class="plan-add" id="plan-form" autocomplete="off">
+          <input id="plan-name" placeholder="Skill, e.g. Kubernetes" aria-label="Skill" maxlength="80" required>
+          <input id="plan-note" placeholder="Project idea (optional)" aria-label="Project idea" maxlength="200">
+          <button class="btn primary" type="submit">Add</button>
+        </form>
+        <div class="board" id="board"></div>
+      </section>
+
       <div class="listbar">
         <div class="count" id="count"></div>
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
@@ -316,6 +350,8 @@ button.tag:hover { border-color: var(--accent); }
   // the bank starts empty. Edits are kept in this browser's localStorage.
   const SEED_URL = "/jobapply/projects";
   const STORE_KEY = "jobapply.projects.v1";
+  const PLANS_KEY = "jobapply.plans.v1";
+  const STATUSES = [{ key: "todo", label: "To learn" }, { key: "doing", label: "Building" }, { key: "done", label: "Done" }];
 
   const COMMON = ["JavaScript","TypeScript","React","Next.js","Vue","Angular","HTML","CSS","Tailwind","Redux","Node.js","Express","Python","Django","Flask","FastAPI","Java","Spring","C#",".NET","Golang","Rust","C++","SQL","PostgreSQL","MySQL","SQLite","MongoDB","Redis","GraphQL","REST API","AWS","Azure","GCP","Docker","Kubernetes","Terraform","CI/CD","GitHub Actions","Git","Linux","pandas","NumPy","scikit-learn","TensorFlow","PyTorch","Machine Learning","Deep Learning","NLP","LLM","Computer Vision","Tableau","Power BI","Excel","Spark","Airflow","Kafka","Snowflake","dbt","ETL","Statistics","Swift","Kotlin","React Native","Flutter","Firebase","Jest","Unit Testing","Agile","Figma","Data Visualization","A/B Testing","Looker","BigQuery","Hadoop","Microservices","Matplotlib","Jupyter","Selenium","OAuth","WebSockets","Supabase","Vercel"];
 
@@ -380,6 +416,23 @@ button.tag:hover { border-color: var(--accent); }
   function persist() {
     try { localStorage.setItem(STORE_KEY, JSON.stringify(state.projects)); return true; } catch (e) { return false; }
   }
+  function loadPlans() {
+    try { const raw = localStorage.getItem(PLANS_KEY); return raw ? normalizePlans(JSON.parse(raw)) : []; } catch (e) { return []; }
+  }
+  function persistPlans() {
+    try { localStorage.setItem(PLANS_KEY, JSON.stringify(state.plans)); return true; } catch (e) { return false; }
+  }
+  function normalizePlans(list) {
+    if (!Array.isArray(list)) return [];
+    const now = Date.now();
+    return list.filter((x) => x && typeof x === "object" && x.name).map((x, i) => ({
+      id: String(x.id || "s-" + now + "-" + i),
+      name: String(x.name),
+      note: String(x.note || ""),
+      status: STATUSES.some((s) => s.key === x.status) ? x.status : "todo",
+      createdAt: Number(x.createdAt) || now
+    }));
+  }
   function normalize(list) {
     if (!Array.isArray(list)) throw new Error("not a list");
     const now = Date.now();
@@ -402,7 +455,7 @@ button.tag:hover { border-color: var(--accent); }
 
   // ---------- state ----------
   const state = {
-    projects: [], loaded: false,
+    projects: [], loaded: false, plans: loadPlans(),
     q: "", cats: new Set(), types: new Set(), skill: null,
     jd: "", sort: "match", selected: new Set(),
     editingId: null, confirmId: null
@@ -466,7 +519,33 @@ button.tag:hover { border-color: var(--accent); }
   // ---------- render ----------
   function render() {
     analyze();
-    renderStats(); renderJD(); renderChips(); renderCards(); renderTray();
+    renderStats(); renderJD(); renderChips(); renderPlans(); renderCards(); renderTray();
+  }
+
+  // A planned skill counts as covered once a project carries it (same skill matching the
+  // cards use). No free-text search: short names like "Go" would hit ordinary words.
+  function coverage(name) {
+    const k = canon(name);
+    return state.projects.filter((p) => analysis.perProject.get(p.id).has(k)).length;
+  }
+
+  function renderPlans() {
+    $("board").innerHTML = STATUSES.map((s, si) => {
+      const items = state.plans.filter((x) => x.status === s.key);
+      const body = items.length ? items.map((x) => {
+        const n = state.loaded ? coverage(x.name) : 0;
+        return '<div class="item" data-id="' + esc(x.id) + '">' +
+          '<div class="item-top"><strong>' + esc(x.name) + '</strong><div class="actions">' +
+          (si > 0 ? '<button class="btn ghost" type="button" data-plan="back" aria-label="Move ' + esc(x.name) + ' to ' + esc(STATUSES[si - 1].label) + '">←</button>' : "") +
+          (si < STATUSES.length - 1 ? '<button class="btn ghost" type="button" data-plan="next" aria-label="Move ' + esc(x.name) + ' to ' + esc(STATUSES[si + 1].label) + '">→</button>' : "") +
+          '<button class="btn ghost danger" type="button" data-plan="del" aria-label="Remove ' + esc(x.name) + '">×</button>' +
+          '</div></div>' +
+          (x.note ? '<div class="note">' + esc(x.note) + '</div>' : "") +
+          (n ? '<span class="tag hit covered">In ' + n + ' project' + (n === 1 ? "" : "s") + '</span>' : "") +
+          '</div>';
+      }).join("") : '<p class="none">' + (s.key === "todo" ? "Nothing planned yet." : "Empty") + '</p>';
+      return '<div class="col"><h3><span>' + esc(s.label) + '</span><span>' + items.length + '</span></h3>' + body + '</div>';
+    }).join("");
   }
 
   function renderStats() {
@@ -651,7 +730,7 @@ button.tag:hover { border-color: var(--accent); }
 
   // ---------- import / export ----------
   $("export-btn").addEventListener("click", () => {
-    const blob = new Blob([JSON.stringify(state.projects, null, 2)], { type: "application/json" });
+    const blob = new Blob([JSON.stringify({ projects: state.projects, plans: state.plans }, null, 2)], { type: "application/json" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
     a.download = "jobapply-projects.json";
@@ -663,8 +742,11 @@ button.tag:hover { border-color: var(--accent); }
     const f = e.target.files && e.target.files[0]; e.target.value = "";
     if (!f) return;
     try {
-      const list = normalize(JSON.parse(await f.text()));
+      // Older exports are a bare project array; newer ones are { projects, plans }.
+      const data = JSON.parse(await f.text());
+      const list = normalize(Array.isArray(data) ? data : data && data.projects);
       state.projects = list; state.selected.clear();
+      if (data && Array.isArray(data.plans)) { state.plans = normalizePlans(data.plans); persistPlans(); }
       persist(); render();
       toast("Imported " + list.length + " project" + (list.length === 1 ? "" : "s"));
     } catch (err) { toast("That file isn't a project export."); }
@@ -712,6 +794,25 @@ button.tag:hover { border-color: var(--accent); }
       case "del-no": state.confirmId = null; render(); break;
       case "del-yes": removeProject(p.id); break;
     }
+  });
+
+  $("plan-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const name = $("plan-name").value.trim();
+    if (!name) return;
+    if (state.plans.some((x) => canon(x.name) === canon(name))) { toast("“" + name + "” is already on the board"); return; }
+    state.plans.push({ id: "s-" + Date.now() + "-" + Math.random().toString(36).slice(2, 7), name, note: $("plan-note").value.trim(), status: "todo", createdAt: Date.now() });
+    if (!persistPlans()) toast("This browser wouldn't save it. Export JSON to keep a copy.");
+    $("plan-name").value = ""; $("plan-note").value = ""; $("plan-name").focus();
+    renderPlans();
+  });
+  $("board").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-plan]"); if (!b) return;
+    const x = state.plans.find((y) => y.id === b.closest(".item").dataset.id); if (!x) return;
+    const i = STATUSES.findIndex((s) => s.key === x.status);
+    if (b.dataset.plan === "del") state.plans = state.plans.filter((y) => y !== x);
+    else x.status = STATUSES[Math.max(0, Math.min(STATUSES.length - 1, i + (b.dataset.plan === "next" ? 1 : -1)))].key;
+    persistPlans(); renderPlans();
   });
 
   $("tray-clear").addEventListener("click", () => { state.selected.clear(); render(); });
