@@ -42,3 +42,6 @@ next-env.d.ts
 
 # Google OAuth client download (holds the client secret)
 client_secret_*.json
+
+# jobapply MCP server dependencies
+/mcp/jobapply/node_modules

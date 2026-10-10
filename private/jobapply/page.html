@@ -206,7 +206,7 @@ button.tag:hover { border-color: var(--accent); }
     </div>
   </header>
 
-  <div class="notice" id="notice">Changes save in this browser only. Use Export JSON to back them up or move them to another device.</div>
+  <div class="notice" id="notice">Projects added or edited through Claude (the jobapply MCP server) sync here from the site. Changes made on this page save in this browser only, so use Export JSON to back them up or move them to another device.</div>
 
   <div class="layout">
     <aside class="rail">
@@ -346,11 +346,13 @@ button.tag:hover { border-color: var(--accent); }
   const CATEGORIES = ["Frontend", "Backend", "Full-Stack", "Mobile", "Data Analysis", "Machine Learning / AI", "Data Engineering", "Cloud & DevOps", "Other"];
   const TYPES = ["Personal", "Academic", "Work", "Internship", "Hackathon", "Open Source", "Freelance"];
 
-  // Seed data comes from the signed-in-only /jobapply/projects route; if it fails
-  // the bank starts empty. Edits are kept in this browser's localStorage.
+  // Server data comes from the signed-in-only /jobapply/projects route (the jobapply MCP
+  // server publishes there). Browser edits are kept in localStorage and merged with it
+  // on load: per id, the copy with the newer updatedAt wins.
   const SEED_URL = "/jobapply/projects";
   const STORE_KEY = "jobapply.projects.v1";
   const PLANS_KEY = "jobapply.plans.v1";
+  const DELETED_KEY = "jobapply.deleted.v1";
   const STATUSES = [{ key: "todo", label: "To learn" }, { key: "doing", label: "Building" }, { key: "done", label: "Done" }];
 
   const COMMON = ["JavaScript","TypeScript","React","Next.js","Vue","Angular","HTML","CSS","Tailwind","Redux","Node.js","Express","Python","Django","Flask","FastAPI","Java","Spring","C#",".NET","Golang","Rust","C++","SQL","PostgreSQL","MySQL","SQLite","MongoDB","Redis","GraphQL","REST API","AWS","Azure","GCP","Docker","Kubernetes","Terraform","CI/CD","GitHub Actions","Git","Linux","pandas","NumPy","scikit-learn","TensorFlow","PyTorch","Machine Learning","Deep Learning","NLP","LLM","Computer Vision","Tableau","Power BI","Excel","Spark","Airflow","Kafka","Snowflake","dbt","ETL","Statistics","Swift","Kotlin","React Native","Flutter","Firebase","Jest","Unit Testing","Agile","Figma","Data Visualization","A/B Testing","Looker","BigQuery","Hadoop","Microservices","Matplotlib","Jupyter","Selenium","OAuth","WebSockets","Supabase","Vercel"];
@@ -415,6 +417,22 @@ button.tag:hover { border-color: var(--accent); }
   }
   function persist() {
     try { localStorage.setItem(STORE_KEY, JSON.stringify(state.projects)); return true; } catch (e) { return false; }
+  }
+  // Ids deleted in this browser, so server copies of them stay hidden.
+  function loadDeleted() {
+    try { const raw = localStorage.getItem(DELETED_KEY); const list = raw ? JSON.parse(raw) : []; return new Set(Array.isArray(list) ? list.map(String) : []); } catch (e) { return new Set(); }
+  }
+  function persistDeleted(ids) {
+    try { localStorage.setItem(DELETED_KEY, JSON.stringify([...ids])); } catch (e) {}
+  }
+  function mergeProjects(server, local, deleted) {
+    const byId = new Map();
+    for (const p of server) if (!deleted.has(p.id)) byId.set(p.id, p);
+    for (const p of local) {
+      const s = byId.get(p.id);
+      if (!s || (p.updatedAt || 0) > (s.updatedAt || 0)) byId.set(p.id, p);
+    }
+    return [...byId.values()];
   }
   function loadPlans() {
     try { const raw = localStorage.getItem(PLANS_KEY); return raw ? normalizePlans(JSON.parse(raw)) : []; } catch (e) { return []; }
@@ -723,6 +741,7 @@ button.tag:hover { border-color: var(--accent); }
     state.confirmId = null;
     state.selected.delete(id);
     state.projects = state.projects.filter((p) => p.id !== id);
+    const deleted = loadDeleted(); deleted.add(id); persistDeleted(deleted);
     persist();
     render();
     toast("Project deleted");
@@ -826,15 +845,14 @@ button.tag:hover { border-color: var(--accent); }
   // ---------- data ----------
   render();
   (async () => {
-    const local = loadLocal();
-    if (local) {
-      try { state.projects = normalize(local); } catch (e) { state.projects = []; }
-    } else {
-      try {
-        const res = await fetch(SEED_URL, { cache: "no-store" });
-        state.projects = res.ok ? normalize(await res.json()) : [];
-      } catch (e) { state.projects = []; }
-    }
+    let local = [], server = [];
+    try { local = normalize(loadLocal() || []); } catch (e) { local = []; }
+    try {
+      const res = await fetch(SEED_URL, { cache: "no-store" });
+      if (res.ok) server = normalize(await res.json());
+    } catch (e) { server = []; }
+    state.projects = mergeProjects(server, local, loadDeleted());
+    if (server.length) persist();
     state.loaded = true;
     render();
   })();
