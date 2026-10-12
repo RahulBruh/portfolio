@@ -1,6 +1,34 @@
 [
   {
     "bullets": [
+      "Fine-tuned DistilBERT (Hugging Face, PyTorch) to categorize card-transaction descriptors, reaching 45.3% ± 3.1% accuracy on unseen merchants across 3 seeds vs. 17.6% for a TF-IDF + logistic regression baseline",
+      "Built a data pipeline that cleans raw descriptors and engineers features, then resolves merchants with RapidFuzz fuzzy matching at 95.9% top-1 on heavily corrupted text vs. 57.8% for sentence embeddings",
+      "Routed low-confidence predictions to human review (80% accuracy on auto-accepted unseen merchants at a 0.8 threshold), served via FastAPI with a model card, 21 pytest tests and GitHub Actions CI"
+    ],
+    "category": "Machine Learning / AI",
+    "createdAt": 1791814388194,
+    "dates": "Oct. 2026",
+    "example": false,
+    "link": "https://github.com/RahulBruh/transaction-nlp",
+    "role": "Solo developer",
+    "summary": "NLP pipeline that maps messy card-statement descriptors to merchants and spend categories with human-review routing, trained and evaluated on synthetic data.",
+    "tech": [
+      "Python",
+      "PyTorch",
+      "Hugging Face",
+      "scikit-learn",
+      "NLP",
+      "FastAPI",
+      "pytest",
+      "GitHub Actions"
+    ],
+    "title": "Transaction NLP: Merchant Matching & Categorization",
+    "type": "Personal",
+    "updatedAt": 1791814388194,
+    "id": "transaction-nlp-merchant-matching-categorization"
+  },
+  {
+    "bullets": [
       "Built shared backend tool services (ticket, account, purchase, knowledge-base, service-status) exposed via MCP and reused across skills, with per-skill least-privilege allow-lists enforced by the engine",
       "Designed an extensible, declarative architecture where each support domain is a SKILL.md file; added a new domain with zero code changes (one 25-line markdown file)",
       "Ran the full SDLC in an Agile workflow: wrote a BRD, user stories and workflow maps, then delivered a 15-story backlog across 4 milestones tracked in GitHub Issues"
