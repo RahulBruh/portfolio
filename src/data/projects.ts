@@ -39,7 +39,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: "skills-support-agent",
-    title: "Skills-Based Support Agent",
+    title: "Skills-Driven Support Agent",
     tag: "Agentic AI · Oct 2026",
     shortDesc:
       "A player-support triage agent where every domain is a declarative SKILL.md file — add or change a support area without touching code.",
@@ -65,7 +65,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: "agent-eval-harness",
-    title: "Agent Eval Harness",
+    title: "Agent Evaluation & Benchmarking Harness",
     tag: "AI Evaluation · Oct 2026",
     shortDesc:
       "A benchmarking CLI that runs labeled tasks across agent configs and reports accuracy, tokens, cost and latency — with a regression gate for CI.",
@@ -87,6 +87,32 @@ export const PROJECTS: Project[] = [
       "Ran a 2×2 ablation on Claude Haiku 4.5 isolating the two optimizations: progressive loading alone cut tokens 61.6%, concise skill files alone 49.9%, and both together 72.0% — nearly all of it input tokens, with output flat.",
       "Used the evals to find real problems: a routing regression introduced by the token optimization (billing questions like “Do you accept PayPal?” fell through to human escalation), ambiguous business rules tightened before any model run, and a 3-case run-to-run swing at temperature 0 that motivated reporting every accuracy figure with a confidence interval.",
       "Implemented run / compare / baseline / gate / cases commands with an on-disk cache keyed by an agent code + skills + data fingerprint, results exported as JSON, Markdown and HTML reports, and a gate command that exits non-zero on regression for use as a pull-request check.",
+    ],
+  },
+  {
+    id: "textbook-graphrag",
+    title: "Textbook GraphRAG Assistant",
+    tag: "RAG / Knowledge Graphs · Sep 2026",
+    shortDesc:
+      "A GraphRAG pipeline over Computer Organization & Architecture course chapters, answering exam-style questions with cited, textbook-grounded responses.",
+    description:
+      "A hands-on build of Microsoft GraphRAG, run on local and cloud models through Ollama. An LLM extracts entities and relationships from the source text into a knowledge graph, Leiden community detection clusters related concepts, and each community gets an LLM-written summary report. I first indexed an Enron email sample to learn how the pipeline behaves, then a separate project over Computer Organization & Architecture course chapters, a subject I can check answers against myself. I documented every step, and every bug I fixed, in a step-by-step quickstart guide.",
+    img: "/assets/textbook-graphrag.svg",
+    tech: [
+      "Python",
+      "Microsoft GraphRAG",
+      "Ollama",
+      "LanceDB",
+      "Knowledge Graphs",
+      "Leiden Clustering",
+      "pandas / Parquet",
+    ],
+    github: "https://github.com/RahulBruh/graphrag-quickstart",
+    highlights: [
+      "Built a GraphRAG index over Computer Organization & Architecture course chapters: converted the source documents to text (python-docx, pdfplumber), had an LLM extract concepts and their relationships into a knowledge graph, and stored the embeddings in LanceDB for retrieval.",
+      "Compared global search, which answers from community summary reports, with local search, which answers from entity and relationship neighborhoods. Global search handled broad cross-document questions, local search returned grounded specifics, and both cited the graph records they came from.",
+      "Checked that Leiden community detection produced a real multi-level hierarchy on a 320-email Enron sample, tracing level-0 reports up to their parent summaries; the original 3-file toy corpus had collapsed into a single flat community.",
+      "Diagnosed an Ollama Cloud “too many concurrent requests” failure during graph extraction and fixed it by tuning concurrency and async mode, then corrected wrong CLI flags in the guide after they failed against the real CLI.",
     ],
   },
   {

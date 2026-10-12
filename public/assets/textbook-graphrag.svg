@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="675" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#080C10"/>
+      <stop offset="1" stop-color="#0F1A22"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <!-- community outlines -->
+  <ellipse cx="430" cy="270" rx="200" ry="150" fill="none" stroke="#1E2A33" stroke-width="2" stroke-dasharray="6 6"/>
+  <ellipse cx="780" cy="270" rx="180" ry="140" fill="none" stroke="#1E2A33" stroke-width="2" stroke-dasharray="6 6"/>
+  <!-- edges -->
+  <g stroke="#2A3A46" stroke-width="2">
+    <line x1="330" y1="210" x2="450" y2="180"/>
+    <line x1="450" y1="180" x2="520" y2="290"/>
+    <line x1="330" y1="210" x2="390" y2="340"/>
+    <line x1="390" y1="340" x2="520" y2="290"/>
+    <line x1="700" y1="200" x2="820" y2="170"/>
+    <line x1="820" y1="170" x2="880" y2="300"/>
+    <line x1="700" y1="200" x2="740" y2="340"/>
+    <line x1="740" y1="340" x2="880" y2="300"/>
+  </g>
+  <line x1="520" y1="290" x2="700" y2="200" stroke="#00D4FF" stroke-width="2.5"/>
+  <!-- nodes -->
+  <g fill="#1E2A33" stroke="#3A4C59" stroke-width="2">
+    <circle cx="330" cy="210" r="16"/>
+    <circle cx="450" cy="180" r="16"/>
+    <circle cx="390" cy="340" r="16"/>
+    <circle cx="820" cy="170" r="16"/>
+    <circle cx="880" cy="300" r="16"/>
+    <circle cx="740" cy="340" r="16"/>
+  </g>
+  <circle cx="520" cy="290" r="20" fill="#00D4FF"/>
+  <circle cx="700" cy="200" r="20" fill="#00D4FF"/>
+  <g font-family="'JetBrains Mono', Consolas, monospace" font-size="15" fill="#8FA3B4" text-anchor="middle">
+    <text x="330" y="250">ALU</text>
+    <text x="450" y="160">register</text>
+    <text x="390" y="380">opcode</text>
+    <text x="520" y="335" fill="#00D4FF">two's complement</text>
+    <text x="700" y="160" fill="#00D4FF">overflow</text>
+    <text x="820" y="150">carry</text>
+    <text x="880" y="340">sign bit</text>
+    <text x="740" y="380">adder</text>
+  </g>
+  <text x="600" y="540" text-anchor="middle" font-family="'Segoe UI', Helvetica, Arial, sans-serif" font-size="46" font-weight="600" letter-spacing="1" fill="#E8EEF3">textbook-graphrag</text>
+  <text x="600" y="584" text-anchor="middle" font-family="'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#8FA3B4">A knowledge graph of course chapters, queried with global and local search.</text>
+</svg>
