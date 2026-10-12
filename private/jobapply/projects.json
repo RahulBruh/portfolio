@@ -222,9 +222,11 @@
   },
   {
     "bullets": [
-      "Built a full-stack internal project-management platform (Cork-Board) with Ruby on Rails, React and a SQL database, designing the REST APIs that centralized 7 projects across 4 clients",
-      "Built an MCP server that automated project-management and client-communication workflows for the team, improving efficiency by an estimated 30%",
-      "Shipped a Dockerized controller service on a Raspberry Pi 5 for a client's Oat Foundry split-flap display, with remote SSH access for agent-driven updates"
+      "Developed an MCP server integrating Slack and Linear that automated the team's project-management and client-communication workflows, improving efficiency by an estimated 30%",
+      "Co-designed the MVC architecture and SQL schema for Cork-Board, a Rails + React project-management platform, building the REST APIs that centralized 7 projects across 4 clients",
+      "Reviewed and validated AI-generated pull requests under a two-reviewer merge policy",
+      "Diagnosed delete-logic bugs that left duplicate records and repaired the data directly in SQL",
+      "Shipped a Dockerized Raspberry Pi 5 controller for a client's split-flap display, with remote SSH updates"
     ],
     "category": "Full-Stack",
     "createdAt": 1791329993000,
@@ -239,6 +241,8 @@
       "SQL",
       "REST API",
       "MCP",
+      "Slack API",
+      "Linear API",
       "Docker",
       "Raspberry Pi",
       "SSH",
@@ -246,7 +250,7 @@
     ],
     "title": "Triad Tech",
     "type": "Internship",
-    "updatedAt": 1791329993000,
+    "updatedAt": 1791818896859,
     "id": "triad-tech-intern"
   },
   {
