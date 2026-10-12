@@ -45,3 +45,6 @@ client_secret_*.json
 
 # jobapply MCP server dependencies
 /mcp/jobapply/node_modules
+
+# jobapply resume profile: phone and references, read only by the local MCP server
+/mcp/jobapply/profile.json

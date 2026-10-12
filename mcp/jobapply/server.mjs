@@ -7,10 +7,14 @@
  * resets it to origin/master before every read and write, and publishes by
  * committing that one file and pushing to master, which redeploys the site on Vercel.
  * It never touches your normal checkout.
+ *
+ * It also tailors resumes: fetch_job reads a posting link, and write_resume renders a
+ * LaTeX resume from profile.json plus chosen projects into a folder on the Desktop.
  */
 import { execFile } from "node:child_process";
 import { existsSync } from "node:fs";
 import { readFile, writeFile } from "node:fs/promises";
+import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { promisify } from "node:util";
@@ -18,6 +22,8 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { completable } from "@modelcontextprotocol/sdk/server/completable.js";
 import { z } from "zod";
+import { fetchJobPosting } from "../../src/lib/jobPosting.mjs";
+import { renderResume, saveResume } from "./resume.mjs";
 
 const run = promisify(execFile);
 
@@ -27,6 +33,11 @@ const REMOTE = process.env.JOBAPPLY_REMOTE || "origin";
 const BRANCH = process.env.JOBAPPLY_BRANCH || "master";
 const SITE_URL = "https://rahulmoka.com/jobapply";
 const DATA_FILE = "private/jobapply/projects.json";
+const DESKTOP = path.join(os.homedir(), "Desktop");
+// Where project repos live locally, and where tailored resumes go.
+const PROJECTS_DIR = path.resolve(process.env.JOBAPPLY_PROJECTS_DIR || DESKTOP);
+const RESUME_DIR = path.resolve(process.env.JOBAPPLY_RESUME_DIR || path.join(DESKTOP, "Resumes"));
+const PROFILE_FILE = path.join(HERE, "profile.json");
 
 // Keep in sync with CATEGORIES / TYPES in private/jobapply/page.html.
 const CATEGORIES = ["Frontend", "Backend", "Full-Stack", "Mobile", "Data Analysis", "Machine Learning / AI", "Data Engineering", "Cloud & DevOps", "Other"];
@@ -124,6 +135,23 @@ function findProject(list, query) {
   return bestScore >= Math.max(1, Math.ceil(words.length / 2)) ? best : null;
 }
 
+/** The project's folder under PROJECTS_DIR, found by its repo name or id, if it exists. */
+function localPath(p) {
+  const repo = (String(p.link || "").match(/github\.com\/[^/]+\/([^/?#]+)/i) || [])[1];
+  for (const name of [repo && repo.replace(/\.git$/, ""), p.id]) {
+    if (name && existsSync(path.join(PROJECTS_DIR, name))) return path.join(PROJECTS_DIR, name);
+  }
+  return null;
+}
+
+// profile.json holds contact details, so it's gitignored and lives only on this machine.
+async function loadProfile() {
+  const raw = await readFile(PROFILE_FILE, "utf8").catch(() => {
+    throw new Error(`Missing ${PROFILE_FILE}: the base resume (name, contact, education, experience, skills). See README.md.`);
+  });
+  return JSON.parse(raw);
+}
+
 /**
  * Apply `mutate` to a fresh copy of the data, commit, and push. If the push loses a
  * race with another commit, start again from the new origin/master once.
@@ -159,12 +187,14 @@ async function snapshot() {
 
 // ---------- server ----------
 const server = new McpServer(
-  { name: "jobapply", version: "0.1.0" },
+  { name: "jobapply", version: "0.2.0" },
   {
     instructions:
-      "Manages the project bank at rahulmoka.com/jobapply. To add a project, use the new_project prompt workflow: " +
-      "interview the user and get their approval of a full draft before calling create_project. To change one, read it with " +
-      "get_project first and confirm the change before calling update_project. Writes push to the live site.",
+      "Manages the project bank at rahulmoka.com/jobapply and tailors resumes from it. When the user gives a job (link, " +
+      "description or both) and wants a resume or to apply, call start_tailor_resume first and follow the workflow it returns. " +
+      "When the user asks to add, make or create a project, call " +
+      "start_new_project first and follow the workflow it returns. When they ask to update, edit or add to a project, call " +
+      "start_edit_project first. Writes push to the live site, so create_project and update_project need the user's approval.",
   },
 );
 
@@ -187,12 +217,14 @@ server.registerTool(
   "list_projects",
   {
     title: "List projects",
-    description: "List every project on the jobapply page (id, title, category, type, dates, tech), as currently deployed.",
+    description:
+      "List every project on the jobapply page (id, title, category, type, dates, tech), as currently deployed, plus " +
+      "local_path: the project's folder on this machine when one is found.",
     annotations: { readOnlyHint: true },
   },
   async () => {
     const list = await snapshot();
-    return text(list.map(({ id, title, category, type, dates, tech }) => ({ id, title, category, type, dates, tech })));
+    return text(list.map(({ id, title, category, type, dates, tech, ...p }) => ({ id, title, category, type, dates, tech, local_path: localPath({ id, ...p }) })));
   },
 );
 
@@ -207,7 +239,7 @@ server.registerTool(
   async ({ project }) => {
     const list = await snapshot();
     const p = findProject(list, project);
-    return p ? text(p) : fail(`No project matches "${project}". Known ids: ${list.map((x) => x.id).join(", ")}`);
+    return p ? text({ ...p, local_path: localPath(p) }) : fail(`No project matches "${project}". Known ids: ${list.map((x) => x.id).join(", ")}`);
   },
 );
 
@@ -226,7 +258,7 @@ server.registerTool(
   {
     title: "Create project",
     description:
-      "Add a new project to rahulmoka.com/jobapply and push it live. Only call this after interviewing the user about the " +
+      "Add a new project to rahulmoka.com/jobapply and push it live. Call start_new_project first. Only call this after interviewing the user about the " +
       "project and getting explicit approval of the complete draft (title, category, type, dates, role, link, summary, bullets, tech).",
     inputSchema: { ...fields, dry_run: z.boolean().optional().describe("Validate and preview without writing or pushing") },
     annotations: { destructiveHint: false, idempotentHint: false, openWorldHint: true },
@@ -274,7 +306,7 @@ server.registerTool(
   {
     title: "Update project",
     description:
-      "Change fields of an existing project on rahulmoka.com/jobapply and push it live. Read it with get_project first. " +
+      "Change fields of an existing project on rahulmoka.com/jobapply and push it live. Call start_edit_project first. " +
       "Only the fields you pass change; arrays (bullets, tech) replace the old array whole, so send the full new list. " +
       "Confirm the exact change with the user before calling.",
     inputSchema: {
@@ -312,7 +344,97 @@ server.registerTool(
   },
 );
 
-// ---------- prompts (slash commands) ----------
+// ---------- resumes ----------
+server.registerTool(
+  "fetch_job",
+  {
+    title: "Fetch job posting",
+    description:
+      "Read a job posting link (Greenhouse, Lever, Ashby, LinkedIn's public view, most company career pages) and return its " +
+      "title, company, location and text. Pages that need a login or render with JavaScript (often Workday, some LinkedIn " +
+      "links) fail; then ask the user to paste the description.",
+    inputSchema: { url: z.string().trim().min(1).describe("The job posting URL") },
+    annotations: { readOnlyHint: true, openWorldHint: true },
+  },
+  async ({ url }) => {
+    try {
+      return text(await fetchJobPosting(url));
+    } catch (err) {
+      return fail(err.message);
+    }
+  },
+);
+
+const lines = (max, what) => z.array(z.string().trim().min(1).max(260)).min(1).max(max).describe(what);
+
+server.registerTool(
+  "write_resume",
+  {
+    title: "Write tailored resume",
+    description:
+      `Render a one-page LaTeX resume (Jake's template) from my base profile plus the chosen projects, save it to ` +
+      `${RESUME_DIR}/<Company> - <Role>/, and compile a PDF if a LaTeX engine is installed. Projects come from ` +
+      "rahulmoka.com/jobapply as deployed; only pass bullets/tech/experience/skills to reword or reorder them for this job, " +
+      "never to add work that wasn't done. Call only after the user approves the draft. Rewrites the file if it exists.",
+    inputSchema: {
+      company: z.string().trim().min(1).max(80),
+      role: z.string().trim().min(1).max(120).describe("Job title as posted"),
+      job_url: z.string().trim().max(500).optional().describe("Posting link, noted at the top of the .tex"),
+      projects: z
+        .array(
+          z.object({
+            project: z.string().min(1).describe("Project id or title"),
+            bullets: lines(4, "This resume's bullets for the project; omit to use the bank's").optional(),
+            tech: z.array(z.string().trim().min(1)).max(8).optional().describe("Tags shown in the heading, most relevant first; omit for the bank's first 6"),
+          }),
+        )
+        .min(1)
+        .max(5)
+        .describe("In resume order, most relevant first"),
+      experience: z
+        .array(z.object({ company: z.string().min(1).describe("Matches a company in the profile"), bullets: lines(5, "Reworded bullets for this job") }))
+        .optional()
+        .describe("Only the jobs whose bullets change; the rest keep the profile's"),
+      skills: z
+        .array(z.object({ label: z.string().trim().min(1).max(40), items: z.string().trim().min(1).max(300) }))
+        .min(1)
+        .max(6)
+        .optional()
+        .describe("Replaces the Technical Skills lines; omit to keep the profile's"),
+    },
+    annotations: { destructiveHint: false, idempotentHint: true, openWorldHint: false },
+  },
+  async ({ company, role, job_url, projects, experience, skills }) => {
+    try {
+      const [list, profile] = await Promise.all([snapshot(), loadProfile()]);
+      const chosen = projects.map((sel) => {
+        const p = findProject(list, sel.project);
+        if (!p) throw new Error(`No project matches "${sel.project}". Known ids: ${list.map((x) => x.id).join(", ")}`);
+        return { title: p.title, dates: p.dates, link: p.link, tech: sel.tech || (p.tech || []).slice(0, 6), bullets: sel.bullets || p.bullets || [] };
+      });
+      const jobs = profile.experience.map((x) => {
+        const edit = (experience || []).find((e) => e.company.trim().toLowerCase() === x.company.toLowerCase());
+        return edit ? { ...x, bullets: edit.bullets } : x;
+      });
+      const unknown = (experience || []).filter((e) => !profile.experience.some((x) => x.company.toLowerCase() === e.company.trim().toLowerCase()));
+      if (unknown.length) throw new Error(`No experience entry for ${unknown.map((e) => `"${e.company}"`).join(", ")}. Companies: ${profile.experience.map((x) => x.company).join(", ")}`);
+
+      const source = renderResume({
+        profile,
+        projects: chosen,
+        experience: jobs,
+        skills: skills || profile.skills,
+        comment: [`Tailored for ${role} at ${company}`, job_url, `Generated by the jobapply MCP server on ${new Date().toISOString().slice(0, 10)}`].filter(Boolean).join("\n"),
+      });
+      const saved = await saveResume({ dir: RESUME_DIR, company, role, name: profile.name, source });
+      return text({ ...saved, projects: chosen.map((p) => p.title) });
+    } catch (err) {
+      return fail(err.message);
+    }
+  },
+);
+
+// ---------- workflows: prompts (slash commands) and start_* tools ----------
 const say = (body) => ({ messages: [{ role: "user", content: { type: "text", text: body } }] });
 
 function styleExamples(list) {
@@ -324,17 +446,12 @@ function styleExamples(list) {
     .join("\n\n");
 }
 
-server.registerPrompt(
-  "new_project",
-  {
-    title: "New jobapply project",
-    description: "Interview me about a project spec, then add it with its skills to rahulmoka.com/jobapply",
-    argsSchema: { spec: z.string().describe("The project spec: pasted text, or a local path / repo to read") },
-  },
-  async ({ spec }) => {
-    const list = await snapshot();
-    const vocab = skillVocab(list).map(([t, n]) => `${t} (${n})`).join(", ");
-    return say(`I want to add a new project to my resume project bank at ${SITE_URL}.
+// The workflows behind the slash commands; the start_* tools return the same text,
+// so a plain request like "use jobapply to add this project" gets the full workflow too.
+async function newProjectBrief(spec) {
+  const list = await snapshot();
+  const vocab = skillVocab(list).map(([t, n]) => `${t} (${n})`).join(", ");
+  return `I want to add a new project to my resume project bank at ${SITE_URL}.
 
 Work through this in order:
 
@@ -363,8 +480,133 @@ ${styleExamples(list)}
 The spec:
 <spec>
 ${spec}
-</spec>`);
+</spec>`;
+}
+
+async function editProjectBrief(project, request) {
+  const list = await snapshot();
+  const p = findProject(list, project);
+  if (!p) {
+    return `I asked to edit the jobapply project "${project}", but nothing matches it. Show me this list and ask which one I meant, then continue with my request: "${request}".
+
+${list.map((x) => `- ${x.id}: ${x.title}`).join("\n")}`;
+  }
+  return `I want to edit a project in my resume project bank at ${SITE_URL}. Here is its current data, as currently deployed:
+
+${JSON.stringify(ordered(p), null, 2)}
+
+My request:
+<request>
+${request}
+</request>
+
+1. If the request points at a local repo or new work, read what you need to get the facts right. If something important is unclear (for example, a metric), ask me instead of guessing.
+2. Show me exactly which fields change, before and after. Keep the existing bullet style: strong past-tense verb, concrete work, then impact, roughly one line each. Never invent numbers.
+3. For new skills, reuse existing tag spellings where they exist. Current tags: ${skillVocab(list).map(([t]) => t).join(", ")}
+4. Once I confirm, call update_project with project "${p.id}" and only the changed fields. bullets and tech replace the whole array, so send the full new list. Then report the commit.`;
+}
+
+async function tailorBrief(job) {
+  const [list, profile] = await Promise.all([snapshot(), loadProfile()]);
+  const projects = list.filter((p) => !p.example).map((p) => ({ ...ordered(p), local_path: localPath(p) }));
+  return `I want a resume tailored to a job, built from my project bank at ${SITE_URL}.
+
+The job (a link, a pasted description, or both):
+<job>
+${job}
+</job>
+
+Work through this in order:
+
+1. Get the posting. For each link above, call fetch_job. If it fails or returns little of the posting (LinkedIn and Workday often do), ask me to paste the description. If I gave both a link and text, use both; my pasted text wins where they differ.
+2. Pull out the company, the role, and the must-have and nice-to-have requirements (languages, frameworks, tools, domain, seniority). Show me a short summary.
+3. Match my projects and experience (below) against it. For each must-have, name the project or job that covers it, or say nothing does.
+4. Pick a path and ask me to confirm it (AskUserQuestion if you have it, your recommendation first):
+   A. Resume now: my projects already cover the core requirements.
+   B. Extend a project first: a must-have gap that one of my projects could genuinely cover with a focused addition. Name the project, its local_path, and the exact feature. Only offer this for projects with a local_path.
+   C. New project first: a must-have gap that no project comes close to. Propose a small project scoped to it: what it does, the stack, and roughly how long it takes.
+   When you recommend B or C, still offer A, since I may want the resume now and the project later.
+5. If B: enter plan mode, read the repo, and get my approval of the plan. Build it in that folder, run it or its tests to show it works, and commit there (ask before pushing). Then call start_edit_project for that project with what was built and follow that workflow to update its entry.
+   If C: get my approval of the spec, then create the folder under ${PROJECTS_DIR}, build it, run it to show it works, and git init it. Then call start_new_project with the folder path and follow that workflow to add it.
+   In both cases, nothing goes on the resume that isn't in the code.
+6. Draft the resume and show it to me for approval:
+   - Projects: 3 (2 to 4 if the fit calls for it), most relevant first.
+   - Project bullets: start from the bank's bullets and reword only to use the posting's terms where they're true. Same facts, same numbers; never invent metrics. At most 3 per project.
+   - Project tech (shown in the heading): up to 6 tags, posting-relevant first.
+   - Experience: keep my bullets; reword to the posting's language only where it stays true.
+   - Technical Skills: reorder so posting-relevant skills lead. Add a skill only if a project or job shows it.
+   - It must fit on one page, so keep each bullet to about one line (~110 characters).
+7. When I approve, call write_resume. It reads projects as deployed, so if step 5 changed the bank, the update must be pushed first. Report the .tex path, and the PDF path or why it didn't compile.
+
+My base resume (header, education, experience, skills):
+${JSON.stringify(profile, null, 2)}
+
+My projects as currently deployed (local_path is the folder on my machine, if found):
+${JSON.stringify(projects, null, 2)}`;
+}
+
+const SPEC = z.string().min(1).describe("The project spec: pasted text, or a local path / repo to read");
+const REQUEST = z.string().min(1).describe("What to change or add");
+const JOB = z.string().min(1).describe("The job: a posting link, the pasted description, or both");
+
+server.registerTool(
+  "start_tailor_resume",
+  {
+    title: "Start tailoring a resume",
+    description:
+      "First step when the user gives a job (link, description or both) and wants a tailored resume. Returns the workflow " +
+      "(read the posting, match projects, optionally extend or create a project, draft for approval, write the LaTeX), " +
+      "the base resume and every project. Follow it before calling write_resume.",
+    inputSchema: { job: JOB },
+    annotations: { readOnlyHint: true },
   },
+  async ({ job }) => text(await tailorBrief(job)),
+);
+
+server.registerTool(
+  "start_new_project",
+  {
+    title: "Start a new project",
+    description:
+      "First step when the user asks to add, make or create a project on rahulmoka.com/jobapply. Returns the workflow " +
+      "(plan mode, interview, draft for approval), house style and existing skill tags. Follow it before calling create_project.",
+    inputSchema: { spec: SPEC },
+    annotations: { readOnlyHint: true },
+  },
+  async ({ spec }) => text(await newProjectBrief(spec)),
+);
+
+server.registerTool(
+  "start_edit_project",
+  {
+    title: "Start editing a project",
+    description:
+      "First step when the user asks to update, edit or add to a project on rahulmoka.com/jobapply. Returns the project's " +
+      "current data and the workflow. Follow it before calling update_project.",
+    inputSchema: { project: z.string().min(1).describe("Project id or title"), request: REQUEST },
+    annotations: { readOnlyHint: true },
+  },
+  async ({ project, request }) => text(await editProjectBrief(project, request)),
+);
+
+server.registerPrompt(
+  "tailor_resume",
+  {
+    title: "Tailor resume to a job",
+    description: "Give a job link and/or description; get a LaTeX resume in Desktop/Resumes, extending or adding a project first if needed",
+    argsSchema: { job: JOB },
+  },
+  async ({ job }) => say(await tailorBrief(job)),
+);
+
+server.registerPrompt(
+  "new_project",
+  {
+    title: "New jobapply project",
+    description: "Interview me about a project spec, then add it with its skills to rahulmoka.com/jobapply",
+    argsSchema: { spec: SPEC },
+  },
+  async ({ spec }) => say(await newProjectBrief(spec)),
 );
 
 server.registerPrompt(
@@ -378,31 +620,10 @@ server.registerPrompt(
         const v = String(value || "").toLowerCase();
         return list.filter((p) => p.id.includes(v) || p.title.toLowerCase().includes(v)).map((p) => p.id).slice(0, 20);
       }),
-      request: z.string().describe("What to change or add"),
+      request: REQUEST,
     },
   },
-  async ({ project, request }) => {
-    const list = await snapshot();
-    const p = findProject(list, project);
-    if (!p) {
-      return say(`I asked to edit the jobapply project "${project}", but nothing matches it. Show me this list and ask which one I meant, then continue with my request: "${request}".
-
-${list.map((x) => `- ${x.id}: ${x.title}`).join("\n")}`);
-    }
-    return say(`I want to edit a project in my resume project bank at ${SITE_URL}. Here is its current data, as currently deployed:
-
-${JSON.stringify(ordered(p), null, 2)}
-
-My request:
-<request>
-${request}
-</request>
-
-1. If the request points at a local repo or new work, read what you need to get the facts right. If something important is unclear (for example, a metric), ask me instead of guessing.
-2. Show me exactly which fields change, before and after. Keep the existing bullet style: strong past-tense verb, concrete work, then impact, roughly one line each. Never invent numbers.
-3. For new skills, reuse existing tag spellings where they exist. Current tags: ${skillVocab(list).map(([t]) => t).join(", ")}
-4. Once I confirm, call update_project with project "${p.id}" and only the changed fields. bullets and tech replace the whole array, so send the full new list. Then report the commit.`);
-  },
+  async ({ project, request }) => say(await editProjectBrief(project, request)),
 );
 
 await server.connect(new StdioServerTransport());

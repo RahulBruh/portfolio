@@ -85,6 +85,11 @@ button { cursor: pointer; }
 .match-box { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; box-shadow: var(--shadow); }
 .match-box h2 { color: var(--accent); }
 .match-box textarea { width: 100%; min-height: 120px; resize: vertical; border: 1px solid var(--line); border-radius: 8px; padding: 10px; background: var(--bg); font-size: 13.5px; }
+.jd-link { display: flex; gap: 6px; margin-bottom: 8px; }
+.jd-link input { flex: 1; min-width: 0; border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; background: var(--bg); font-size: 13.5px; }
+.jd-status { font-size: 13px; color: var(--muted); margin: 0 0 8px; }
+.jd-status.err { color: var(--danger); }
+.jd-actions { display: flex; justify-content: flex-end; margin-top: 8px; }
 .match-box .hint { font-size: 13px; color: var(--muted); margin: 8px 0 0; }
 .jd-terms { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
 .jd-legend { display: flex; gap: 14px; font-size: 12px; color: var(--muted); margin-top: 10px; }
@@ -194,7 +199,7 @@ button.tag:hover { border-color: var(--accent); }
   <header class="top">
     <div>
       <h1>Resume Project Bank</h1>
-      <p>Every project you've built, sorted by category and tagged by skill. Paste a job posting to see which projects fit best, then pick the ones to copy into your resume.</p>
+      <p>Every project you've built, sorted by category and tagged by skill. Add a job link or paste a posting to see which projects fit best, then pick the ones to copy into your resume.</p>
       <div class="stats" id="stats">Loading projects…</div>
     </div>
     <div class="top-btns">
@@ -212,7 +217,13 @@ button.tag:hover { border-color: var(--accent); }
     <aside class="rail">
       <section class="match-box panel" aria-labelledby="jd-h">
         <h2 id="jd-h">Tailor to a job</h2>
-        <textarea id="jd" placeholder="Paste the job description here…" aria-label="Job description"></textarea>
+        <form class="jd-link" id="jd-link-form" autocomplete="off">
+          <input id="jd-url" type="url" inputmode="url" placeholder="Job link (https://…)" aria-label="Job link">
+          <button class="btn small" id="jd-fetch" type="submit">Fetch</button>
+        </form>
+        <p class="jd-status" id="jd-status" role="status" hidden></p>
+        <textarea id="jd" placeholder="…or paste the job description here" aria-label="Job description"></textarea>
+        <div class="jd-actions"><button class="btn small" id="jd-claude" type="button" title="Copy a request for Claude Code: tailor a LaTeX resume to this job with the jobapply MCP server">Copy Claude request</button></div>
         <p class="hint" id="jd-hint">Projects get ranked by how many of the posting's skills they cover.</p>
         <div id="jd-out"></div>
       </section>
@@ -783,10 +794,70 @@ button.tag:hover { border-color: var(--accent); }
     if ((e.metaKey || e.ctrlKey) && e.key === "Enter" && !$("overlay").hidden) saveForm();
   });
 
+  // ---------- job link ----------
+  // The signed-in-only /jobapply/job route fetches the posting server-side (no CORS) and
+  // returns its text, which goes into the description box so matching works the same way.
+  const JOB_URL = "/jobapply/job";
+  let fetched = { url: "", text: "" }; // what the last Fetch put in the description box
+
+  function setJD(value) {
+    if ($("jd").value !== value) $("jd").value = value; // don't move the caret while typing
+    state.jd = value;
+    if (value.trim()) state.sort = "match";
+    $("sort").value = state.sort;
+    render();
+  }
+  function jdStatus(msg, isErr) {
+    const s = $("jd-status");
+    s.textContent = msg; s.hidden = !msg; s.classList.toggle("err", !!isErr);
+  }
+
+  async function fetchJob() {
+    const url = $("jd-url").value.trim();
+    if (!url) { $("jd-url").focus(); return; }
+    $("jd-fetch").disabled = true;
+    jdStatus("Fetching the posting…");
+    try {
+      const res = await fetch(JOB_URL + "?url=" + encodeURIComponent(url), { cache: "no-store" });
+      const data = await res.json().catch(() => ({}));
+      if (res.status === 401) throw new Error("Your sign-in expired. Reload the page and sign in again.");
+      if (!res.ok) throw new Error(data.error || "Couldn't load that link. Paste the description instead.");
+      const header = [data.title, data.company, data.location].filter(Boolean).join(" · ");
+      const text = (header ? header + "\n\n" : "") + data.text;
+      // Keep anything pasted by hand; replace only an earlier fetch.
+      const cur = $("jd").value.trim();
+      setJD(!cur || cur === fetched.text.trim() ? text : $("jd").value.replace(/\s*$/, "") + "\n\n" + text);
+      fetched = { url, text };
+      jdStatus("Loaded " + (header || "the posting") + ".");
+    } catch (err) {
+      jdStatus(err.message, true);
+    } finally {
+      $("jd-fetch").disabled = false;
+    }
+  }
+
+  $("jd-link-form").addEventListener("submit", (e) => { e.preventDefault(); fetchJob(); });
+
+  // A request for Claude Code; the jobapply MCP server takes it from there (fetch_job, then write_resume).
+  $("jd-claude").addEventListener("click", () => {
+    const url = $("jd-url").value.trim();
+    const jd = $("jd").value.trim();
+    if (!url && !jd) { jdStatus("Add a job link or paste the description first.", true); return; }
+    // The server fetches links itself, so only send text that didn't come from that link.
+    const pasted = url && fetched.url === url ? jd.replace(fetched.text.trim(), "").trim() : jd;
+    const parts = ["Use jobapply to tailor my resume to this job."];
+    if (url) parts.push("Job link: " + url);
+    if (pasted) parts.push("Job description:\n" + pasted);
+    copy(parts.join("\n\n"), "Copied. Paste it into Claude Code");
+  });
+
   let jdTimer;
   $("jd").addEventListener("input", (e) => {
     clearTimeout(jdTimer);
-    jdTimer = setTimeout(() => { state.jd = e.target.value; if (state.jd.trim()) state.sort = "match"; $("sort").value = state.sort; render(); }, 250);
+    // A bare link pasted into the description box goes to the link field instead.
+    const v = e.target.value.trim();
+    if (/^https?:\/\/\S+$/i.test(v)) { e.target.value = ""; $("jd-url").value = v; setJD(""); fetchJob(); return; }
+    jdTimer = setTimeout(() => setJD(e.target.value), 250);
   });
   $("q").addEventListener("input", (e) => { state.q = e.target.value; render(); });
   $("sort").addEventListener("change", (e) => { state.sort = e.target.value; render(); });
