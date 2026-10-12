@@ -62,9 +62,9 @@
   },
   {
     "bullets": [
-      "Built an automated test harness with 60 labeled test cases comparing variants on accuracy (with 95% confidence intervals), token usage, cost and latency",
-      "Cut tokens per task by 72% and cost by 65% while raising accuracy from 86.8% to 92.5% by restructuring instructions and loading context only when needed",
-      "Added a regression gate to the CI/CD pipeline (GitHub Actions) so every prompt or skill change is validated before merge and can't silently regress accuracy or cost"
+      "Cut cost per task by 65% and tokens by 72% while raising accuracy from 86.8% to 92.5%, by restructuring agent instructions and loading context only when needed",
+      "Designed an automated test harness with 60 labeled test cases comparing agent variants on accuracy (with 95% confidence intervals), token usage, cost and latency",
+      "Added a CI/CD gate that blocks accuracy and cost regressions, using GitHub OIDC to log runs to AWS S3"
     ],
     "category": "Machine Learning / AI",
     "createdAt": 1791329999000,
@@ -78,13 +78,15 @@
       "pytest",
       "GitHub Actions",
       "CI/CD",
+      "AWS",
+      "S3",
       "Claude API",
       "Prompt Engineering",
       "Statistics"
     ],
     "title": "Agent Evaluation & Benchmarking Harness",
     "type": "Personal",
-    "updatedAt": 1791329999000,
+    "updatedAt": 1791818890730,
     "id": "agent-eval-harness"
   },
   {
