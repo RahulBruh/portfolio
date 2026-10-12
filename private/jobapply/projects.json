@@ -29,9 +29,11 @@
   },
   {
     "bullets": [
-      "Built shared backend tool services (ticket, account, purchase, knowledge-base, service-status) exposed via MCP and reused across skills, with per-skill least-privilege allow-lists enforced by the engine",
-      "Designed an extensible, declarative architecture where each support domain is a SKILL.md file; added a new domain with zero code changes (one 25-line markdown file)",
-      "Ran the full SDLC in an Agile workflow: wrote a BRD, user stories and workflow maps, then delivered a 15-story backlog across 4 milestones tracked in GitHub Issues"
+      "Built a customer-support triage agent on Amazon Bedrock (Claude) where each domain (billing, account recovery, bugs, connectivity) is a declarative SKILL.md file; added a new domain with zero code changes",
+      "Exposed ticket, account, purchase, knowledge-base and service-status lookups as shared MCP tool services, with per-skill least-privilege tool allow-lists enforced by the engine",
+      "Modeled DynamoDB from access patterns so every lookup is a GetItem or single-partition Query (composite sort keys, keys-only GSIs); chose table-per-entity design so IAM scopes each Lambda to its own data",
+      "Deployed tools via CDK to Lambda, IAM-authorized API Gateway and DynamoDB (~250 ms warm-start), with CloudWatch metrics, a dashboard and 20 alarms on error rate, p90 latency and 5xx",
+      "Owned the full SDLC in Agile, from a BRD and user stories to a 15-story backlog delivered over 4 milestones"
     ],
     "category": "Machine Learning / AI",
     "createdAt": 1791330000000,
@@ -39,18 +41,23 @@
     "example": false,
     "link": "https://github.com/RahulBruh/skills-support-agent",
     "role": "Solo developer",
-    "summary": "Plug-and-play support-triage agent where each domain is a declarative SKILL.md file backed by shared MCP tools.",
+    "summary": "Plug-and-play support-triage agent on Amazon Bedrock where each domain is a declarative SKILL.md file, backed by MCP tools deployed to AWS Lambda with CDK.",
     "tech": [
       "Python",
       "LangGraph",
-      "Claude API",
+      "Amazon Bedrock",
       "MCP",
-      "LLM",
+      "DynamoDB",
+      "AWS CDK",
+      "AWS Lambda",
+      "API Gateway",
+      "CloudWatch",
+      "Claude API",
       "Agile"
     ],
     "title": "Skills-Driven Support Agent",
     "type": "Personal",
-    "updatedAt": 1791330000000,
+    "updatedAt": 1791818887494,
     "id": "skills-support-agent"
   },
   {
