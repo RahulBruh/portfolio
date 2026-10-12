@@ -90,6 +90,33 @@ export const PROJECTS: Project[] = [
     ],
   },
   {
+    id: "transaction-nlp",
+    title: "Transaction NLP: Merchant Matching & Categorization",
+    tag: "NLP / Machine Learning · Oct 2026",
+    shortDesc:
+      "Turns messy card-statement lines like “SQ *BLUE BOTTLE COFFEE 4471” into a merchant and spend category, and sends the predictions it isn't sure about to a human.",
+    description:
+      "An NLP pipeline for card-transaction descriptors. A seeded generator produces synthetic statement lines for 80 merchants in 10 categories, with the noise real statements carry: processor prefixes, order references, store numbers, locations, typos and network truncation. A cleaning step normalizes them and derives engineered features. Merchants are resolved against a directory with fuzzy matching, sentence embeddings or a hybrid, and categories come from a TF-IDF + logistic regression baseline or a fine-tuned DistilBERT. The split is by merchant, so the headline number measures generalization to merchants the model has never seen, not memorization. All data is synthetic, and a model card covers intended use, limitations and escalation.",
+    img: "/assets/transaction-nlp.svg",
+    tech: [
+      "Python",
+      "PyTorch",
+      "Hugging Face Transformers",
+      "scikit-learn",
+      "RapidFuzz",
+      "sentence-transformers",
+      "FastAPI",
+      "GitHub Actions",
+    ],
+    github: "https://github.com/RahulBruh/transaction-nlp",
+    highlights: [
+      "Fine-tuned DistilBERT for 10-way spend categorization: 45.3% ± 3.1% accuracy on unseen merchants across 3 seeds vs. 17.6% for a word + char n-gram TF-IDF and engineered-feature logistic regression baseline (chance is 10%). Both models score about 99–100% on merchants seen in training, which is why the split is by merchant.",
+      "Compared merchant resolution methods on 800 heavily corrupted descriptors (two typos, a dropped word, aggressive truncation): RapidFuzz fuzzy matching reached 95.9% top-1, a fuzzy + embedding hybrid 92.4%, and MiniLM sentence embeddings alone 57.8%, while fuzzy matching was also about 10× faster.",
+      "Built escalation into the pipeline: a confident directory match supplies the category, otherwise the classifier does, and any prediction under the confidence threshold is flagged needs_review. At a 0.8 threshold, DistilBERT auto-accepts 39% of unseen-merchant lines at 80% accuracy and routes the rest to review.",
+      "Served it through a FastAPI /categorize endpoint that returns the cleaned text, source and confidence for every result, with 21 pytest tests, a GitHub Actions workflow, and one seeded command that rebuilds the data, models and results report.",
+    ],
+  },
+  {
     id: "textbook-graphrag",
     title: "Textbook GraphRAG Assistant",
     tag: "RAG / Knowledge Graphs · Sep 2026",

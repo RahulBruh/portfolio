@@ -21,6 +21,8 @@ export const SKILLS: SkillGroup[] = [
       "Knowledge Graphs",
       "PyTorch",
       "Hugging Face",
+      "scikit-learn",
+      "NLP",
       "Diffusers",
       "PEFT",
       "Accelerate",
