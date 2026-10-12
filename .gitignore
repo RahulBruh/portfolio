@@ -48,3 +48,5 @@ client_secret_*.json
 
 # jobapply resume profile: phone and references, read only by the local MCP server
 /mcp/jobapply/profile.json
+# jobapply resume library: copies of personal resumes, postings, embeddings and the model cache
+/mcp/jobapply/library/

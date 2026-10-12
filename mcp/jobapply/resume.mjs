@@ -1,6 +1,9 @@
 /**
- * Renders a one-page LaTeX resume (Jake Gutierrez's template) from profile.json plus
- * projects from the jobapply bank, and compiles it to PDF when a TeX engine is installed.
+ * Renders a one-page LaTeX resume from profile.json plus projects from the jobapply bank,
+ * in the layout of Rahul_Moka_Resume_EA (Jake Gutierrez's template, restyled): plain name,
+ * status line, company/dates over an italic role, **bold** keywords, underlined project
+ * links and tight bullet lists. Compiles to PDF when a TeX engine is installed and reports
+ * the page count, since a resume has to fit on one page.
  */
 import { execFile } from "node:child_process";
 import { existsSync } from "node:fs";
@@ -30,7 +33,10 @@ export function tex(s) {
     .replace(/[–—‘’“”…•→←×≈≥≤±°\u00a0]/g, (c) => UNICODE[c]);
 }
 
-const texUrl = (u) => String(u).replace(/[\\%#{}]/g, (c) => "\\" + c);
+/** tex() plus **bold** -> \textbf{bold}. */
+export const rich = (s) => tex(s).replace(/\*\*(.+?)\*\*/g, "\\textbf{$1}");
+
+const texUrl =(u) => String(u).replace(/[\\%#{}]/g, (c) => "\\" + c);
 const fullUrl = (u) => (/^[a-z]+:/i.test(u) ? u : "https://" + u);
 const shortUrl = (u) => String(u).replace(/^https?:\/\/(www\.)?/i, "").replace(/\/$/, "");
 
@@ -40,9 +46,7 @@ const PREAMBLE = String.raw`\documentclass[letterpaper,11pt]{article}
 \usepackage{latexsym}
 \usepackage[empty]{fullpage}
 \usepackage{titlesec}
-\usepackage{marvosym}
 \usepackage[usenames,dvipsnames]{color}
-\usepackage{verbatim}
 \usepackage{enumitem}
 \usepackage[hidelinks]{hyperref}
 \usepackage{fancyhdr}
@@ -100,13 +104,13 @@ const PREAMBLE = String.raw`\documentclass[letterpaper,11pt]{article}
 
 \newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
 \newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
-\newcommand{\resumeItemListStart}{\begin{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}[itemsep=0pt, parsep=0pt, topsep=2pt]}
 \newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
 `;
 
 function items(bullets) {
   if (!bullets || !bullets.length) return "";
-  return "      \\resumeItemListStart\n" + bullets.map((b) => `        \\resumeItem{${tex(b)}}`).join("\n") + "\n      \\resumeItemListEnd\n";
+  return "      \\resumeItemListStart\n" + bullets.map((b) => `        \\resumeItem{${rich(b)}}`).join("\n") + "\n      \\resumeItemListEnd\n";
 }
 
 /**
@@ -127,8 +131,9 @@ export function renderResume({ profile, projects, experience, skills, comment })
   out.push(PREAMBLE, "\\begin{document}", "");
   out.push(
     "\\begin{center}",
-    `    \\textbf{\\Huge \\scshape ${tex(profile.name)}} \\\\ \\vspace{1pt}`,
-    `    \\small ${contact}` + (profile.headerNote ? ` \\\\ \\vspace{1pt}\n    \\small ${tex(profile.headerNote)}` : ""),
+    `    \\textbf{\\Huge ${tex(profile.name)}} \\\\ \\vspace{1pt}`,
+    ...(profile.headerNote ? [`    \\small ${tex(profile.headerNote)} \\\\ \\vspace{1pt}`] : []),
+    `    \\small ${contact}`,
     "\\end{center}",
     "",
   );
@@ -143,7 +148,7 @@ export function renderResume({ profile, projects, experience, skills, comment })
   if (experience.length) {
     out.push("\\section{Experience}", "  \\resumeSubHeadingListStart");
     for (const x of experience) {
-      out.push(`    \\resumeSubheading\n      {${tex(x.title)} -- ${tex(x.company)}}{${tex(x.dates)}}\n      {${tex(x.note || "")}}{${tex(x.location || "")}}`);
+      out.push(`    \\resumeSubheading\n      {${tex(x.company)}}{${tex(x.dates)}}\n      {${tex(x.title)}}{${tex(x.location || "")}}`);
       out.push(items(x.bullets).trimEnd());
     }
     out.push("  \\resumeSubHeadingListEnd", "");
@@ -151,7 +156,7 @@ export function renderResume({ profile, projects, experience, skills, comment })
 
   out.push("\\section{Projects}", "    \\resumeSubHeadingListStart");
   for (const p of projects) {
-    const title = p.link ? `\\href{${texUrl(fullUrl(p.link))}}{\\textbf{${tex(p.title)}}}` : `\\textbf{${tex(p.title)}}`;
+    const title = p.link ? `\\href{${texUrl(fullUrl(p.link))}}{\\underline{\\textbf{${tex(p.title)}}}}` : `\\textbf{${tex(p.title)}}`;
     const tech = p.tech.length ? ` $|$ \\emph{${tex(p.tech.join(", "))}}` : "";
     out.push(`      \\resumeProjectHeading\n          {${title}${tech}}{${tex(p.dates || "")}}`);
     out.push(items(p.bullets).trimEnd());
@@ -162,7 +167,7 @@ export function renderResume({ profile, projects, experience, skills, comment })
     "\\section{Technical Skills}",
     " \\begin{itemize}[leftmargin=0.15in, label={}]",
     "    \\small{\\item{",
-    skills.map((s) => `     \\textbf{${tex(s.label)}}{: ${tex(s.items)}}`).join(" \\\\\n"),
+    skills.map((s) => `     \\textbf{${tex(s.label)}}{: ${rich(s.items)}}`).join(" \\\\\n"),
     "    }}",
     " \\end{itemize}",
     "",
@@ -185,14 +190,17 @@ export async function saveResume({ dir, company, role, name, source }) {
   return { folder, texPath, ...(await compile(folder, base)) };
 }
 
-/** pdflatex/xelatex on PATH, MiKTeX's default per-user install, or tectonic. */
+/** pdflatex on PATH, MiKTeX's default per-user install, or tectonic (PATH or %LOCALAPPDATA%\Programs\tectonic). */
 async function findEngine() {
-  const miktex = path.join(process.env.LOCALAPPDATA || path.join(os.homedir(), "AppData", "Local"), "Programs", "MiKTeX", "miktex", "bin", "x64");
+  const programs = path.join(process.env.LOCALAPPDATA || path.join(os.homedir(), "AppData", "Local"), "Programs");
+  const miktex = path.join(programs, "MiKTeX", "miktex", "bin", "x64", "pdflatex.exe");
+  const tectonic = path.join(programs, "tectonic", "tectonic.exe");
   const candidates = [
     process.env.JOBAPPLY_LATEX,
     "pdflatex",
-    existsSync(path.join(miktex, "pdflatex.exe")) ? path.join(miktex, "pdflatex.exe") : null,
+    existsSync(miktex) ? miktex : null,
     "tectonic",
+    existsSync(tectonic) ? tectonic : null,
   ].filter(Boolean);
   for (const c of candidates) {
     try {
@@ -224,11 +232,21 @@ async function compile(folder, base) {
     const errors = log.split(/\r?\n/).filter((l) => /^!|:\d+:|Error/.test(l)).slice(0, 12).join("\n");
     return { pdfPath: null, compileNote: `${path.basename(engine)} failed:\n${errors || log.slice(-2000)}` };
   }
-  const log = await readFile(path.join(folder, base + ".log"), "utf8").catch(() => "");
-  const pages = Number((log.match(/Output written on .*?\((\d+) pages?/s) || [])[1]) || null;
+  if (!existsSync(pdfPath)) return { pdfPath: null, compileNote: `${path.basename(engine)} ran but wrote no PDF.` };
+  const { pages, overflow } = await pageInfo(pdfPath);
   return {
-    pdfPath: existsSync(pdfPath) ? pdfPath : null,
+    pdfPath,
     pages,
-    compileNote: pages && pages > 1 ? `The PDF is ${pages} pages. Trim bullets or drop a project to fit one page.` : "Compiled.",
+    overflow: overflow || undefined,
+    compileNote: pages > 1 ? `The PDF is ${pages} pages. Trim bullets or drop a project to fit one page; "overflow" is the text past page 1.` : "Compiled to one page.",
   };
+}
+
+/** Page count, and the text that spilled past page 1. */
+export async function pageInfo(pdfPath) {
+  const { extractText, getDocumentProxy } = await import("unpdf");
+  const pdf = await getDocumentProxy(new Uint8Array(await readFile(pdfPath)));
+  if (pdf.numPages <= 1) return { pages: pdf.numPages, overflow: "" };
+  const { text } = await extractText(pdf, { mergePages: false });
+  return { pages: pdf.numPages, overflow: text.slice(1).join("\n").trim() };
 }

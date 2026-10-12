@@ -10,6 +10,8 @@
  *
  * It also tailors resumes: fetch_job reads a posting link, and write_resume renders a
  * LaTeX resume from profile.json plus chosen projects into a folder on the Desktop.
+ * library.mjs keeps a local, searchable store of past resumes, projects and postings so
+ * new resumes can reuse the structure and phrasing of ones that worked.
  */
 import { execFile } from "node:child_process";
 import { existsSync } from "node:fs";
@@ -24,6 +26,7 @@ import { completable } from "@modelcontextprotocol/sdk/server/completable.js";
 import { z } from "zod";
 import { fetchJobPosting } from "../../src/lib/jobPosting.mjs";
 import { renderResume, saveResume } from "./resume.mjs";
+import { addJob, addResume, listLibrary, removeDoc, search, similarResumes, syncProjects } from "./library.mjs";
 
 const run = promisify(execFile);
 
@@ -194,7 +197,8 @@ const server = new McpServer(
       "description or both) and wants a resume or to apply, call start_tailor_resume first and follow the workflow it returns. " +
       "When the user asks to add, make or create a project, call " +
       "start_new_project first and follow the workflow it returns. When they ask to update, edit or add to a project, call " +
-      "start_edit_project first. Writes push to the live site, so create_project and update_project need the user's approval.",
+      "start_edit_project first. Writes push to the live site, so create_project and update_project need the user's approval. " +
+      "search_library and similar_resumes retrieve from past resumes and projects; add_resume stores a resume the user shares.",
   },
 );
 
@@ -372,19 +376,22 @@ server.registerTool(
   {
     title: "Write tailored resume",
     description:
-      `Render a one-page LaTeX resume (Jake's template) from my base profile plus the chosen projects, save it to ` +
-      `${RESUME_DIR}/<Company> - <Role>/, and compile a PDF if a LaTeX engine is installed. Projects come from ` +
-      "rahulmoka.com/jobapply as deployed; only pass bullets/tech/experience/skills to reword or reorder them for this job, " +
-      "never to add work that wasn't done. Call only after the user approves the draft. Rewrites the file if it exists.",
+      `Render a one-page LaTeX resume (EA layout) from my base profile plus the chosen projects, save it to ` +
+      `${RESUME_DIR}/<Company> - <Role>/, and compile a PDF. Projects come from rahulmoka.com/jobapply as deployed; only ` +
+      "pass bullets/tech/experience/skills to reword or reorder them for this job, never to add work that wasn't done. Wrap " +
+      "key terms and metrics in **double asterisks** to bold them. Fails if the PDF runs past one page, returning the overflow " +
+      "text so you can trim and call again. On success the resume (and job_text) is added to the library. Call only after the " +
+      "user approves the draft. Rewrites the file if it exists.",
     inputSchema: {
       company: z.string().trim().min(1).max(80),
       role: z.string().trim().min(1).max(120).describe("Job title as posted"),
       job_url: z.string().trim().max(500).optional().describe("Posting link, noted at the top of the .tex"),
+      job_text: z.string().max(20000).optional().describe("The posting text, stored in the library with this resume"),
       projects: z
         .array(
           z.object({
             project: z.string().min(1).describe("Project id or title"),
-            bullets: lines(4, "This resume's bullets for the project; omit to use the bank's").optional(),
+            bullets: lines(5, "This resume's bullets for the project; omit to use the bank's").optional(),
             tech: z.array(z.string().trim().min(1)).max(8).optional().describe("Tags shown in the heading, most relevant first; omit for the bank's first 6"),
           }),
         )
@@ -392,9 +399,13 @@ server.registerTool(
         .max(5)
         .describe("In resume order, most relevant first"),
       experience: z
-        .array(z.object({ company: z.string().min(1).describe("Matches a company in the profile"), bullets: lines(5, "Reworded bullets for this job") }))
+        .array(z.object({ company: z.string().min(1).describe("Matches a company in the profile"), bullets: lines(6, "Reworded bullets for this job") }))
         .optional()
-        .describe("Only the jobs whose bullets change; the rest keep the profile's"),
+        .describe("Only the jobs whose bullets change; the rest keep the profile's (or their linked bank project's)"),
+      experience_order: z
+        .array(z.string().min(1))
+        .optional()
+        .describe("Companies to include, in order; omit for every profile job not marked optional"),
       skills: z
         .array(z.object({ label: z.string().trim().min(1).max(40), items: z.string().trim().min(1).max(300) }))
         .min(1)
@@ -404,7 +415,7 @@ server.registerTool(
     },
     annotations: { destructiveHint: false, idempotentHint: true, openWorldHint: false },
   },
-  async ({ company, role, job_url, projects, experience, skills }) => {
+  async ({ company, role, job_url, job_text, projects, experience, experience_order, skills }) => {
     try {
       const [list, profile] = await Promise.all([snapshot(), loadProfile()]);
       const chosen = projects.map((sel) => {
@@ -412,12 +423,19 @@ server.registerTool(
         if (!p) throw new Error(`No project matches "${sel.project}". Known ids: ${list.map((x) => x.id).join(", ")}`);
         return { title: p.title, dates: p.dates, link: p.link, tech: sel.tech || (p.tech || []).slice(0, 6), bullets: sel.bullets || p.bullets || [] };
       });
-      const jobs = profile.experience.map((x) => {
-        const edit = (experience || []).find((e) => e.company.trim().toLowerCase() === x.company.toLowerCase());
-        return edit ? { ...x, bullets: edit.bullets } : x;
+      const same = (a, b) => a.trim().toLowerCase() === b.trim().toLowerCase();
+      const companies = profile.experience.map((x) => x.company).join(", ");
+      const unknown = [...(experience || []).map((e) => e.company), ...(experience_order || [])].filter((c) => !profile.experience.some((x) => same(x.company, c)));
+      if (unknown.length) throw new Error(`No experience entry for ${unknown.map((c) => `"${c}"`).join(", ")}. Companies: ${companies}`);
+      const included = experience_order
+        ? experience_order.map((c) => profile.experience.find((x) => same(x.company, c)))
+        : profile.experience.filter((x) => !x.optional);
+      // Bullets: this call's rewrite, else the profile's, else the linked bank project's.
+      const jobs = included.map((x) => {
+        const edit = (experience || []).find((e) => same(e.company, x.company));
+        const linked = x.project ? findProject(list, x.project) : null;
+        return { ...x, bullets: edit?.bullets || x.bullets || linked?.bullets || [] };
       });
-      const unknown = (experience || []).filter((e) => !profile.experience.some((x) => x.company.toLowerCase() === e.company.trim().toLowerCase()));
-      if (unknown.length) throw new Error(`No experience entry for ${unknown.map((e) => `"${e.company}"`).join(", ")}. Companies: ${profile.experience.map((x) => x.company).join(", ")}`);
 
       const source = renderResume({
         profile,
@@ -427,7 +445,127 @@ server.registerTool(
         comment: [`Tailored for ${role} at ${company}`, job_url, `Generated by the jobapply MCP server on ${new Date().toISOString().slice(0, 10)}`].filter(Boolean).join("\n"),
       });
       const saved = await saveResume({ dir: RESUME_DIR, company, role, name: profile.name, source });
-      return text({ ...saved, projects: chosen.map((p) => p.title) });
+      const result = { ...saved, projects: chosen.map((p) => p.title) };
+      if (saved.pages > 1) {
+        return fail(`The resume is ${saved.pages} pages; it has to fit on one. Trim bullets, shorten wrapped lines or drop a project, then call write_resume again.\n\n` + JSON.stringify(result, null, 2));
+      }
+      if (saved.pdfPath) {
+        // Remember what was sent for this kind of job; a library failure shouldn't fail the resume.
+        try {
+          const added = await addResume({ file: saved.texPath, company, role, job_text: job_text || "" });
+          if (job_text) await addJob({ company, role, url: job_url || "", text: job_text });
+          result.library = `Added to the library as ${added.id}.`;
+        } catch (err) {
+          result.library = `Not added to the library: ${err.message}`;
+        }
+      }
+      return text(result);
+    } catch (err) {
+      return fail(err.message);
+    }
+  },
+);
+
+// ---------- library (RAG over past resumes, projects and postings) ----------
+server.registerTool(
+  "add_resume",
+  {
+    title: "Add resume to library",
+    description:
+      "Store a resume (.pdf, .tex, .html, .md or .txt) in the local library so tailoring can retrieve its structure and phrasing. " +
+      "Pass the company/role it was written for and the posting text if known. style_reference: true makes it the layout every " +
+      "new resume mimics (replacing the previous one).",
+    inputSchema: {
+      path: z.string().min(1).describe("Path to the resume file"),
+      company: z.string().trim().max(80).optional(),
+      role: z.string().trim().max(120).optional(),
+      job_text: z.string().max(20000).optional().describe("The posting this resume was tailored to"),
+      label: z.string().trim().max(120).optional().describe("Display name; defaults to the file name"),
+      style_reference: z.boolean().optional(),
+    },
+    annotations: { destructiveHint: false, idempotentHint: true, openWorldHint: false },
+  },
+  async ({ path: file, ...opts }) => {
+    try {
+      return text(await addResume({ file, ...opts }));
+    } catch (err) {
+      return fail(err.message);
+    }
+  },
+);
+
+server.registerTool(
+  "search_library",
+  {
+    title: "Search library",
+    description:
+      "Hybrid (BM25 + embedding) search over past resume bullets, project-bank entries and stored postings. Use it per job " +
+      "requirement to find which project or bullet covers it and how it was phrased before. Facts must still match the bank.",
+    inputSchema: {
+      query: z.string().min(1),
+      k: z.number().int().min(1).max(30).optional().describe("Results to return (default 8)"),
+      type: z.enum(["resume", "project", "job"]).optional(),
+      section: z.string().optional().describe('Filter by section name, e.g. "Experience", "Projects", "Skills"'),
+    },
+    annotations: { readOnlyHint: true },
+  },
+  async ({ query, k, type, section }) => {
+    try {
+      await syncProjects(await snapshot());
+      return text(await search(query, { k, type, section }));
+    } catch (err) {
+      return fail(err.message);
+    }
+  },
+);
+
+server.registerTool(
+  "similar_resumes",
+  {
+    title: "Similar past resumes",
+    description:
+      "Given a job posting's text, return the pinned style-reference resume plus the past tailored resumes closest to that job " +
+      "(section outline, and the .tex when stored), to mimic their structure and emphasis.",
+    inputSchema: { job_text: z.string().min(20), k: z.number().int().min(1).max(5).optional() },
+    annotations: { readOnlyHint: true },
+  },
+  async ({ job_text, k }) => {
+    try {
+      return text(await similarResumes(job_text, k || 2));
+    } catch (err) {
+      return fail(err.message);
+    }
+  },
+);
+
+server.registerTool(
+  "list_library",
+  {
+    title: "List library",
+    description: "What the resume library holds: resumes (with the style reference marked), stored postings and indexed projects.",
+    annotations: { readOnlyHint: true },
+  },
+  async () => {
+    try {
+      await syncProjects(await snapshot());
+      return text(await listLibrary());
+    } catch (err) {
+      return fail(err.message);
+    }
+  },
+);
+
+server.registerTool(
+  "remove_resume",
+  {
+    title: "Remove from library",
+    description: "Remove a resume or stored posting from the library by id (from list_library).",
+    inputSchema: { id: z.string().min(1) },
+    annotations: { destructiveHint: true, idempotentHint: true, openWorldHint: false },
+  },
+  async ({ id }) => {
+    try {
+      return text(await removeDoc(id));
     } catch (err) {
       return fail(err.message);
     }
@@ -506,9 +644,35 @@ ${request}
 4. Once I confirm, call update_project with project "${p.id}" and only the changed fields. bullets and tech replace the whole array, so send the full new list. Then report the commit.`;
 }
 
+/** Style reference + closest past resumes for this job, as text for the brief. */
+async function libraryContext(job) {
+  try {
+    let jobText = job;
+    const url = (job.match(/https?:\/\/\S+/) || [])[0];
+    if (url && job.replace(url, "").trim().length < 200) {
+      jobText = await fetchJobPosting(url).then((j) => [j.title, j.company, j.text].filter(Boolean).join("\n")).catch(() => job);
+    }
+    const { style_reference: ref, similar } = await similarResumes(jobText, 2);
+    if (!ref && !similar.length) return "The resume library is empty. Add past resumes with add_resume so tailoring can learn from them.";
+    const out = [];
+    if (ref) {
+      out.push(`Style reference ("${ref.title}"). Mirror its section order, entry shape, bullet counts and density:\n${JSON.stringify(ref.outline, null, 2)}`);
+    }
+    for (const s of similar) {
+      out.push(`Past resume for a similar job: "${s.title}"${s.company ? ` (${s.role || ""} at ${s.company})` : ""}, similarity ${s.score}. Note what it led with and emphasized:\n${JSON.stringify(s.outline, null, 2)}`);
+    }
+    return out.join("\n\n");
+  } catch (err) {
+    return `(Library unavailable: ${err.message})`;
+  }
+}
+
 async function tailorBrief(job) {
   const [list, profile] = await Promise.all([snapshot(), loadProfile()]);
+  await syncProjects(list).catch(() => {});
   const projects = list.filter((p) => !p.example).map((p) => ({ ...ordered(p), local_path: localPath(p) }));
+  const library = await libraryContext(job);
+  const linked = new Set(profile.experience.map((x) => x.project).filter(Boolean));
   return `I want a resume tailored to a job, built from my project bank at ${SITE_URL}.
 
 The job (a link, a pasted description, or both):
@@ -520,7 +684,7 @@ Work through this in order:
 
 1. Get the posting. For each link above, call fetch_job. If it fails or returns little of the posting (LinkedIn and Workday often do), ask me to paste the description. If I gave both a link and text, use both; my pasted text wins where they differ.
 2. Pull out the company, the role, and the must-have and nice-to-have requirements (languages, frameworks, tools, domain, seniority). Show me a short summary.
-3. Match my projects and experience (below) against it. For each must-have, name the project or job that covers it, or say nothing does.
+3. Match my projects and experience (below) against it. Call search_library for each must-have to find the bullets that cover it (and how past resumes phrased them). For each must-have, name the project or job that covers it, or say nothing does.
 4. Pick a path and ask me to confirm it (AskUserQuestion if you have it, your recommendation first):
    A. Resume now: my projects already cover the core requirements.
    B. Extend a project first: a must-have gap that one of my projects could genuinely cover with a focused addition. Name the project, its local_path, and the exact feature. Only offer this for projects with a local_path.
@@ -529,14 +693,18 @@ Work through this in order:
 5. If B: enter plan mode, read the repo, and get my approval of the plan. Build it in that folder, run it or its tests to show it works, and commit there (ask before pushing). Then call start_edit_project for that project with what was built and follow that workflow to update its entry.
    If C: get my approval of the spec, then create the folder under ${PROJECTS_DIR}, build it, run it to show it works, and git init it. Then call start_new_project with the folder path and follow that workflow to add it.
    In both cases, nothing goes on the resume that isn't in the code.
-6. Draft the resume and show it to me for approval:
-   - Projects: 3 (2 to 4 if the fit calls for it), most relevant first.
-   - Project bullets: start from the bank's bullets and reword only to use the posting's terms where they're true. Same facts, same numbers; never invent metrics. At most 3 per project.
-   - Project tech (shown in the heading): up to 6 tags, posting-relevant first.
-   - Experience: keep my bullets; reword to the posting's language only where it stays true.
-   - Technical Skills: reorder so posting-relevant skills lead. Add a skill only if a project or job shows it.
-   - It must fit on one page, so keep each bullet to about one line (~110 characters).
-7. When I approve, call write_resume. It reads projects as deployed, so if step 5 changed the bank, the update must be pushed first. Report the .tex path, and the PDF path or why it didn't compile.
+6. Draft the resume and show it to me for approval. Follow the style reference below (the layout write_resume renders):
+   - Header, education (with Relevant Coursework) and experience come from my profile. Experience shows company and dates, then the role in italics. Jobs marked optional are left out unless they help this posting (pass experience_order to include them).
+   - Projects: 3 (2 to 4 if the fit calls for it), most relevant first. Don't list ${[...linked].join(" or ") || "a project"} as a project; it already appears under Experience.
+   - Bullets: start from the bank's bullets and reword only to use the posting's terms where they're true. Same facts, same numbers; never invent metrics. The lead project and lead job may have up to 5 bullets, the rest 2–3.
+   - Bold the key technologies and metrics in each bullet with **double asterisks**, the way the style reference does (for example "Cut **cost per task by 65%**", "on **Amazon Bedrock**").
+   - Project tech (shown in the heading): up to 6 tags, posting-relevant first. Keep the heading on one line.
+   - Technical Skills: 4 lines, posting-relevant groups and skills first. Add a skill only if a project or job shows it.
+   - Past resumes in the library show structure, phrasing and emphasis only. Every fact must come from the bank, my profile, or the code.
+7. When I approve, call write_resume with job_text set to the posting. It reads projects as deployed, so if step 5 changed the bank, the update must be pushed first. If it reports more than one page, trim (shorten wrapped bullets first, then drop the weakest bullet or project) and call it again until it fits. Report the .tex and PDF paths.
+
+Library context (style reference and the most similar past resumes):
+${library}
 
 My base resume (header, education, experience, skills):
 ${JSON.stringify(profile, null, 2)}
