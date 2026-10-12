@@ -25,25 +25,35 @@ export default function RagHowItWorks() {
   return (
     <section
       id="how"
-      className="scroll-mt-20 py-[98px] px-[clamp(20px,5vw,72px)] max-w-[1200px] mx-auto w-full"
+      className="scroll-mt-20 px-[clamp(20px,5vw,72px)] max-w-[1200px] mx-auto w-full"
+      style={{ paddingTop: "var(--rag-section-py)", paddingBottom: "var(--rag-section-py)" }}
     >
-      <span className="block text-accent text-xs uppercase tracking-[0.08em] font-medium mb-4">
+      <span
+        className="inline-block text-accent text-xs uppercase tracking-[0.04em] font-semibold mb-5 px-4 py-1.5"
+        style={{ borderRadius: "var(--rag-radius-full)", background: "var(--rag-accent-soft)" }}
+      >
         Engagement
       </span>
-      <h2 className="font-medium text-[32px] leading-[1.15] tracking-[-0.015em] mb-8 text-text">
+      <h2 className="font-medium text-[32px] leading-[1.15] tracking-[-0.015em] mb-10 text-text">
         How it works
       </h2>
       <div
-        className="grid gap-px"
+        className="grid gap-5"
         style={{ gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}
       >
         {STEPS.map((step) => (
           <div
             key={step.n}
-            className="bg-surface p-[8.4px] border border-border flex flex-col gap-1.5"
+            className="bg-surface border p-6 flex flex-col gap-1.5"
+            style={{ borderRadius: "var(--rag-radius-lg)", borderColor: "var(--color-border)" }}
           >
-            <span className="text-text/55 text-xs tabular-nums">{step.n}</span>
-            <h3 className="font-medium text-xl leading-[1.2] text-text mt-3 mb-2.5">{step.title}</h3>
+            <span
+              className="inline-flex items-center justify-center w-8 h-8 mb-4 text-accent text-xs font-semibold tabular-nums"
+              style={{ borderRadius: "var(--rag-radius-full)", background: "var(--rag-accent-soft)" }}
+            >
+              {step.n}
+            </span>
+            <h3 className="font-medium text-lg leading-[1.2] text-text mb-2">{step.title}</h3>
             <p className="text-sm text-text-muted leading-[1.6] m-0">{step.body}</p>
           </div>
         ))}

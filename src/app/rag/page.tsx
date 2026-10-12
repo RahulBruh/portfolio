@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import RagHero from "@/components/rag/RagHero";
+import RagPillars from "@/components/rag/RagPillars";
+import RagArchitecture from "@/components/rag/RagArchitecture";
 import RagDemo from "@/components/rag/RagDemo";
 import RagServices from "@/components/rag/RagServices";
 import RagHowItWorks from "@/components/rag/RagHowItWorks";
+import RagStack from "@/components/rag/RagStack";
 import RagContact from "@/components/rag/RagContact";
 
 export const metadata: Metadata = {
@@ -15,9 +18,12 @@ export default function RagPage() {
   return (
     <main className="rag flex flex-col bg-bg text-text">
       <RagHero />
+      <RagPillars />
+      <RagArchitecture />
       <RagDemo />
       <RagServices />
       <RagHowItWorks />
+      <RagStack />
       <RagContact />
     </main>
   );
