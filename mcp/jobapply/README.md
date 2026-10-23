@@ -38,6 +38,7 @@ Plain requests work the same way, e.g. "use jobapply to tailor my resume to <lin
 | `list_skills` | existing skill tags with counts |
 | `create_project` | validate, add, commit, push (`dry_run` to preview) |
 | `update_project` | change fields; `bullets`/`tech` replace whole (`dry_run` to preview) |
+| `delete_project` | remove a project from the bank and push (`dry_run` to preview) |
 
 `CATEGORIES` and `TYPES` in `server.mjs` mirror the ones in `private/jobapply/page.html`; keep them in sync.
 

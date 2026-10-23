@@ -197,7 +197,7 @@ const server = new McpServer(
       "description or both) and wants a resume or to apply, call start_tailor_resume first and follow the workflow it returns. " +
       "When the user asks to add, make or create a project, call " +
       "start_new_project first and follow the workflow it returns. When they ask to update, edit or add to a project, call " +
-      "start_edit_project first. Writes push to the live site, so create_project and update_project need the user's approval. " +
+      "start_edit_project first. To remove a project, confirm with the user, then call delete_project. Writes push to the live site, so create_project, update_project and delete_project need the user's approval. " +
       "search_library and similar_resumes retrieve from past resumes and projects; add_resume stores a resume the user shares.",
   },
 );
@@ -341,6 +341,40 @@ server.registerTool(
         (r) => `jobapply: update ${r.project.title}`,
         dry_run,
       );
+      return text(res);
+    } catch (err) {
+      return fail(err.message);
+    }
+  },
+);
+
+server.registerTool(
+  "delete_project",
+  {
+    title: "Delete project",
+    description:
+      "Remove a project from rahulmoka.com/jobapply and push it live; its library entry is dropped on the next sync. " +
+      "Show the user the project (get_project) and get explicit confirmation before calling. Profile experience entries " +
+      "that link to it keep their own bullets.",
+    inputSchema: {
+      project: z.string().min(1).describe("Project id or title"),
+      dry_run: z.boolean().optional().describe("Show what would be removed without writing or pushing"),
+    },
+    annotations: { destructiveHint: true, idempotentHint: true, openWorldHint: true },
+  },
+  async ({ project: query, dry_run }) => {
+    try {
+      const res = await publish(
+        (list) => {
+          const p = findProject(list, query);
+          if (!p) throw new Error(`No project matches "${query}". Known ids: ${list.map((x) => x.id).join(", ")}`);
+          list.splice(list.indexOf(p), 1);
+          return { action: "deleted", project: p };
+        },
+        (r) => `jobapply: delete ${r.project.title}`,
+        dry_run,
+      );
+      if (res.published) await syncProjects(await snapshot()).catch(() => {});
       return text(res);
     } catch (err) {
       return fail(err.message);

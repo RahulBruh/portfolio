@@ -410,28 +410,5 @@
     "type": "Personal",
     "updatedAt": 1791329987000,
     "id": "poker-fullstack"
-  },
-  {
-    "bullets": [
-      "Automated contract generation for 30+ clients via a Next.js, React, and Node.js pipeline, saving 30 minutes per contract by parsing form state into server-side templates and PDFs",
-      "Refactored a complex React codebase, fixing 20 critical bugs and addressing performance issues in an unorganized project"
-    ],
-    "category": "Full-Stack",
-    "createdAt": 1791329986000,
-    "dates": "Jan. 2025 – Present",
-    "example": false,
-    "link": "",
-    "role": "Software Engineer Intern",
-    "summary": "Contract-generation automation and React codebase cleanup for a consulting firm.",
-    "tech": [
-      "Next.js",
-      "React",
-      "Node.js",
-      "JavaScript"
-    ],
-    "title": "West TN Consulting",
-    "type": "Internship",
-    "updatedAt": 1791329986000,
-    "id": "west-tn-consulting"
   }
 ]
