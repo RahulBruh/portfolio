@@ -119,9 +119,10 @@ function items(bullets) {
  * @param {{ title: string, dates?: string, link?: string, tech: string[], bullets: string[] }[]} o.projects  in resume order
  * @param {any[]} o.experience  profile.experience, with any per-job bullet rewrites already applied
  * @param {{ label: string, items: string }[]} o.skills
+ * @param {string} [o.graduation]  graduation date for this resume; omit for each entry's first `graduation` option
  * @param {string} [o.comment]  goes at the top of the file
  */
-export function renderResume({ profile, projects, experience, skills, comment }) {
+export function renderResume({ profile, projects, experience, skills, graduation, comment }) {
   const contact = profile.contact
     .map((c) => (c.url ? `\\href{${texUrl(fullUrl(c.url))}}{\\underline{${tex(c.text)}}}` : tex(c.text)))
     .join(" $|$ ");
@@ -140,7 +141,9 @@ export function renderResume({ profile, projects, experience, skills, comment })
 
   out.push("\\section{Education}", "  \\resumeSubHeadingListStart");
   for (const e of profile.education) {
-    out.push(`    \\resumeSubheading\n      {${tex(e.school)}}{${tex(e.location)}}\n      {${tex(e.degree)}}{${tex(e.dates)}}`);
+    // Entries with `graduation` options show "start – <chosen date>"; others keep fixed `dates`.
+    const dates = e.graduation?.length ? `${e.start} – ${graduation || e.graduation[0]}` : e.dates;
+    out.push(`    \\resumeSubheading\n      {${tex(e.school)}}{${tex(e.location)}}\n      {${tex(e.degree)}}{${tex(dates)}}`);
     out.push(items(e.bullets).trimEnd());
   }
   out.push("  \\resumeSubHeadingListEnd", "");
