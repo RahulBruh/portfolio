@@ -117,7 +117,7 @@
   },
   {
     "bullets": [
-      "Built with a 3-person team at Lincoln Financial's CodeLinc 11 hackathon: an AI assistant that turns a natural conversation into a personalized life-insurance coverage estimate, deployed on AWS",
+      "Built with a 4-person team at Lincoln Financial's CodeLinc 11 hackathon: an AI assistant that turns a natural conversation into a personalized life-insurance coverage estimate, deployed on AWS",
       "Developed a React interface with OpenAI API chat and ElevenLabs voice that visualizes the coverage math, compares term vs. whole life and runs \"what if\" scenarios before exporting a summary"
     ],
     "category": "Machine Learning / AI",
@@ -125,7 +125,7 @@
     "dates": "Oct. 2026",
     "example": false,
     "link": "https://github.com/frsfzl/codelinc11",
-    "role": "3-person team",
+    "role": "4-person team",
     "summary": "Voice-enabled AI assistant that turns a conversation into a personalized life insurance coverage estimate (Lincoln Financial CodeLinc 11).",
     "tech": [
       "React",
@@ -137,7 +137,7 @@
     ],
     "title": "Linc: AI Life Insurance Assistant",
     "type": "Hackathon",
-    "updatedAt": 1791818893925,
+    "updatedAt": 1792858430500,
     "id": "linc-codelinc11"
   },
   {
