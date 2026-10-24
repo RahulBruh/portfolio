@@ -1,6 +1,37 @@
 [
   {
     "bullets": [
+      "Built a layer-7 HTTP load balancer and reverse proxy in Go (standard library plus yaml.v3), selecting backends in a custom RoundTripper beneath httputil.ReverseProxy so header handling, streaming and upgrades stayed in the standard library",
+      "Implemented round-robin, nginx-style smooth weighted round-robin and weighted least-connections; least-connections delivered 2.7x round-robin's throughput (7,182 vs 2,621 req/s) and cut p90 latency from 51.7 ms to 8.5 ms with one 50 ms backend in the pool. Also fixed a weighted round-robin bug where leftover weight debt sent request bursts to one backend after the pool changed",
+      "Designed layered failure handling (active health checks with rise/fall thresholds, passive checks on live traffic, and retries of idempotent requests on a different backend), cutting failed requests when a backend was killed under load from 4,327 to 0 and detection time from 2,979 ms to 18 ms",
+      "Instrumented the proxy with lock-free, atomics-based Prometheus metrics (latency histogram, per-backend responses and errors, up and in-flight gauges, state transitions) and a JSON admin status API on a separate port",
+      "Wrote 44 test cases at 92.7% statement coverage, run with the Go race detector in GitHub Actions alongside a Docker Compose smoke test that stops a backend and asserts zero client errors",
+      "Packaged as a multi-stage distroless Docker image with a Compose demo, a closed-loop load generator and a reproducible benchmark suite, measuring 8,562 req/s through the proxy vs 23,177 req/s direct on a shared 12-thread laptop, delivered through 8 issue-linked PRs"
+    ],
+    "category": "Backend",
+    "createdAt": 1792868293411,
+    "dates": "Oct. 2026",
+    "example": false,
+    "link": "https://github.com/RahulBruh/go-load-balancer",
+    "role": "Software Engineer",
+    "summary": "Layer-7 load balancer in Go with three balancing strategies, active and passive health checks, retries and Prometheus metrics, benchmarked under load and failure.",
+    "tech": [
+      "Go",
+      "Docker",
+      "Prometheus",
+      "GitHub Actions",
+      "CI/CD",
+      "Linux",
+      "Unit Testing",
+      "Algorithms"
+    ],
+    "title": "HTTP Load Balancer & Reverse Proxy in Go",
+    "type": "Personal",
+    "updatedAt": 1792868293411,
+    "id": "http-load-balancer-reverse-proxy-in-go"
+  },
+  {
+    "bullets": [
       "Fine-tuned DistilBERT (Hugging Face, PyTorch) to categorize card-transaction descriptors, reaching 45.3% ± 3.1% accuracy on unseen merchants across 3 seeds vs. 17.6% for a TF-IDF + logistic regression baseline",
       "Built a data pipeline that cleans raw descriptors and engineers features, then resolves merchants with RapidFuzz fuzzy matching at 95.9% top-1 on heavily corrupted text vs. 57.8% for sentence embeddings",
       "Routed low-confidence predictions to human review (80% accuracy on auto-accepted unseen merchants at a 0.8 threshold), served via FastAPI with a model card, 21 pytest tests and GitHub Actions CI"
