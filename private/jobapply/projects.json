@@ -343,31 +343,6 @@
   },
   {
     "bullets": [
-      "Built a client's jewelry storefront with React, Vite and React Router",
-      "Integrated Stripe payments through an Express server that creates checkout sessions with the secret key kept server-side"
-    ],
-    "category": "Full-Stack",
-    "createdAt": 1791329990000,
-    "dates": "Feb. 2026 – Mar. 2026",
-    "example": false,
-    "link": "https://github.com/RahulBruh/Vintage-Vault-Website",
-    "role": "Solo developer",
-    "summary": "Online jewelry store built for a client, with Stripe checkout.",
-    "tech": [
-      "React",
-      "Vite",
-      "Node.js",
-      "Express",
-      "Stripe",
-      "JavaScript"
-    ],
-    "title": "Vintage Vault E-commerce Site",
-    "type": "Freelance",
-    "updatedAt": 1791329990000,
-    "id": "vintage-vault"
-  },
-  {
-    "bullets": [
       "Architected an AI procurement platform using React.js, Tailwind CSS, PostgreSQL, and Claude API to link Memphis authorities with 20,000+ small businesses, expanding local business contract win rate by 12% and addressing the $41 million that leaves the Memphis community annually via outsourced city contracts",
       "Engineered the back-end with Flask, Google Places API, and Yelp API, built by a 4-person team in 18 hours under a strict 24-hour hackathon deadline"
     ],
