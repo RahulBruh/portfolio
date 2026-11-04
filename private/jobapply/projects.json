@@ -230,29 +230,6 @@
   },
   {
     "bullets": [
-      "Built a Next.js + TypeScript + Tailwind portfolio with project, resume and RAG demo pages",
-      "Added a server-side API route that calls a RunPod serverless GPU endpoint to generate images from my SDXL LoRA live in the browser"
-    ],
-    "category": "Frontend",
-    "createdAt": 1791329994000,
-    "dates": "Aug. 2026 – Oct. 2026",
-    "example": false,
-    "link": "https://rahulmoka.com",
-    "role": "Solo developer",
-    "summary": "rahulmoka.com: portfolio with project pages, resume and live AI demos.",
-    "tech": [
-      "Next.js",
-      "React",
-      "TypeScript",
-      "Tailwind"
-    ],
-    "title": "Personal Portfolio Website",
-    "type": "Personal",
-    "updatedAt": 1791329994000,
-    "id": "portfolio-site"
-  },
-  {
-    "bullets": [
       "Developed an MCP server integrating Slack and Linear that automated the team's project-management and client-communication workflows, improving efficiency by an estimated 30%",
       "Co-designed the MVC architecture and SQL schema for Cork-Board, a Rails + React project-management platform, building the REST APIs that centralized 7 projects across 4 clients",
       "Reviewed and validated AI-generated pull requests under a two-reviewer merge policy",
