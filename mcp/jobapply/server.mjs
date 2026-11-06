@@ -147,6 +147,33 @@ function localPath(p) {
   return null;
 }
 
+/** The repo root when a link points into a GitHub repo, else null. */
+function githubRepo(link) {
+  const m = String(link || "").trim().match(/^(?:https?:\/\/)?(?:www\.)?github\.com\/([^/\s?#]+)\/([^/\s?#]+)/i);
+  return m ? `https://github.com/${m[1]}/${m[2].replace(/\.git$/i, "")}` : null;
+}
+
+/**
+ * Resume rule: a project title links to its GitHub repo. With no repo it links to the bank's
+ * demo URL until there is one, and with no link at all it stays plain. A private repo also
+ * leaves it plain, since it would 404 for an employer. Each exception comes back as a note. An
+ * anonymous request tells private from public; if GitHub can't be reached, the link stays.
+ */
+async function resumeTitleLink(p) {
+  const repo = githubRepo(p.link);
+  if (!repo) {
+    const demo = String(p.link || "").trim();
+    return /^https?:\/\//i.test(demo)
+      ? { link: demo, note: `${p.title}: links to its demo (${demo}) because it has no GitHub repo in the bank.` }
+      : { link: "", note: `${p.title}: not linked, it has no GitHub repo in the bank.` };
+  }
+  try {
+    const res = await fetch(repo, { method: "HEAD", redirect: "follow", signal: AbortSignal.timeout(8000) });
+    if (res.status === 404) return { link: "", note: `${p.title}: not linked, ${repo} is private or missing, so it would 404 for an employer.` };
+  } catch { /* offline: keep the link */ }
+  return { link: repo };
+}
+
 // profile.json holds contact details, so it's gitignored and lives only on this machine.
 async function loadProfile() {
   const raw = await readFile(PROFILE_FILE, "utf8").catch(() => {
@@ -214,7 +241,7 @@ const fields = {
   tech: z.array(z.string()).min(1).max(20).describe("Skill tags; reuse the existing spelling from list_skills"),
   dates: z.string().trim().max(40).optional().describe('e.g. "Oct. 2026" or "Jan. 2026 – Mar. 2026"'),
   role: z.string().trim().max(80).optional().describe('e.g. "Solo developer"'),
-  link: z.string().trim().max(300).optional().describe("Repo or demo URL"),
+  link: z.string().trim().max(300).optional().describe("GitHub repo URL (resume titles link to it), or a demo URL if there's no repo"),
 };
 
 server.registerTool(
@@ -452,16 +479,16 @@ server.registerTool(
         .optional()
         .describe("Graduation date to show, one of the profile education's graduation options; omit for the first (preferred) one"),
     },
-    annotations: { destructiveHint: false, idempotentHint: true, openWorldHint: false },
+    annotations: { destructiveHint: false, idempotentHint: true, openWorldHint: true },
   },
   async ({ company, role, job_url, job_text, projects, experience, experience_order, skills, graduation }) => {
     try {
       const [list, profile] = await Promise.all([snapshot(), loadProfile()]);
-      const chosen = projects.map((sel) => {
+      const chosen = await Promise.all(projects.map(async (sel) => {
         const p = findProject(list, sel.project);
         if (!p) throw new Error(`No project matches "${sel.project}". Known ids: ${list.map((x) => x.id).join(", ")}`);
-        return { title: p.title, dates: p.dates, link: p.link, tech: sel.tech || (p.tech || []).slice(0, 6), bullets: sel.bullets || p.bullets || [] };
-      });
+        return { title: p.title, dates: p.dates, ...(await resumeTitleLink(p)), tech: sel.tech || (p.tech || []).slice(0, 6), bullets: sel.bullets || p.bullets || [] };
+      }));
       const same = (a, b) => a.trim().toLowerCase() === b.trim().toLowerCase();
       const companies = profile.experience.map((x) => x.company).join(", ");
       const unknown = [...(experience || []).map((e) => e.company), ...(experience_order || [])].filter((c) => !profile.experience.some((x) => same(x.company, c)));
@@ -484,6 +511,8 @@ server.registerTool(
       const buffer = await renderResume({ profile, projects: chosen, experience: jobs, skills: skills || profile.skills, graduation: gradDate });
       const saved = await saveResume({ dir: RESUME_DIR, company, role, name: profile.name, buffer });
       const result = { ...saved, graduation: gradDate || options[0], projects: chosen.map((p) => p.title) };
+      const linkNotes = chosen.map((p) => p.note).filter(Boolean);
+      if (linkNotes.length) result.title_link_notes = linkNotes;
       // Past about 112 characters at this size, a heading runs into its right-aligned date. Word still calls that one page.
       const crowded = chosen.filter((p) => `${p.title} | ${p.tech.join(", ")} ${p.dates || ""}`.length > 112).map((p) => p.title);
       if (crowded.length) result.warning = `Heading may run into its date: ${crowded.join("; ")}. Pass fewer or shorter tech tags and call write_resume again.`;
@@ -640,7 +669,7 @@ Work through this in order:
 2. Read the spec below. If it is or mentions a local path or repo, read its README and enough of the code to know what was actually built, the stack, and any numbers worth citing.
 3. Interview me about what the spec doesn't settle. Use AskUserQuestion if you have it (a few questions per round, with your best guess as the first option); otherwise ask in chat. Cover:
    - title, category, type, dates and my role
-   - the repo or demo link
+   - the GitHub repo link (resume titles link to it; use a demo link only if there's no repo)
    - the real results and metrics behind each bullet. Never invent numbers; if I don't have one, describe the result without it.
 4. Draft the full entry and present it for approval (via ExitPlanMode if you're in plan mode). The draft needs:
    - title, category, type, dates, role, link
@@ -743,10 +772,11 @@ Work through this in order:
    - Projects: 3 (2 to 4 if the fit calls for it), most relevant first. Don't list ${[...linked].join(" or ") || "a project"} as a project; it already appears under Experience.
    - Bullets: start from the bank's bullets and reword only to use the posting's terms where they're true. Same facts, same numbers; never invent metrics. The lead project and lead job may have up to 5 bullets, the rest 2–3.
    - Bold the key technologies and metrics in each bullet with **double asterisks**, the way the style reference does (for example "Cut **cost per task by 65%**", "on **Amazon Bedrock**").
+   - Project titles link to their GitHub repos; write_resume does this from the bank's link and reports any exception in title_link_notes (a demo link when there's no repo, plain text when there's no link or the repo is private).
    - Project tech (shown in the heading): up to 6 tags, posting-relevant first. Keep the heading on one line.
    - Technical Skills: 4 lines, posting-relevant groups and skills first. Add a skill only if a project or job shows it.
    - Past resumes in the library show structure, phrasing and emphasis only. Every fact must come from the bank, my profile, or the code.
-7. When I approve, call write_resume with job_text set to the posting. It reads projects as deployed, so if step 5 changed the bank, the update must be pushed first. If it reports more than one page, trim (shorten wrapped bullets first, then drop the weakest bullet or project) and call it again until it fits. If it returns a warning, fix that too and call it again. Report the .docx path and whether Word confirmed one page (pageNote); if it couldn't, tell me to check it.
+7. When I approve, call write_resume with job_text set to the posting. It reads projects as deployed, so if step 5 changed the bank, the update must be pushed first. If it reports more than one page, trim (shorten wrapped bullets first, then drop the weakest bullet or project) and call it again until it fits. If it returns a warning, fix that too and call it again. Report the .docx path and whether Word confirmed one page (pageNote); if it couldn't, tell me to check it. Tell me about any title_link_notes.
 
 Library context (style reference and the most similar past resumes):
 ${library}
