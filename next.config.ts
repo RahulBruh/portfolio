@@ -9,7 +9,9 @@ const nextConfig: NextConfig = {
       // Kestrel (spend console project) is hosted on Higgsfield and served
       // under this path. The app itself is built with the /kestrel-spend
       // basepath, so pages, assets and server functions all stay in it.
-      { source: "/kestrel-spend", destination: `${KESTREL_ORIGIN}/kestrel-spend` },
+      // The trailing slash matters: the origin redirects /kestrel-spend to
+      // /kestrel-spend/, and Next redirects that back, which loops forever.
+      { source: "/kestrel-spend", destination: `${KESTREL_ORIGIN}/kestrel-spend/` },
       { source: "/kestrel-spend/:path*", destination: `${KESTREL_ORIGIN}/kestrel-spend/:path*` },
     ];
   },
