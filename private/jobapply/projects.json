@@ -405,7 +405,7 @@
     "createdAt": 1791329987000,
     "dates": "Jun. 2025",
     "example": false,
-    "link": "",
+    "link": "https://github.com/RahulBruh/Poker-App",
     "role": "",
     "summary": "Multiplayer poker site with real-time game rooms.",
     "tech": [
@@ -419,7 +419,7 @@
     ],
     "title": "Poker Full-Stack Website",
     "type": "Personal",
-    "updatedAt": 1791329987000,
+    "updatedAt": 1793981101784,
     "id": "poker-fullstack"
   }
 ]
