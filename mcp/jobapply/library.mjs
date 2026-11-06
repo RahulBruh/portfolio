@@ -113,52 +113,6 @@ const DATE_TAIL = /((jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*
 const BULLET = /^[•▪●◦\-–*]\s*/;
 const VERB = /^(built|led|ran|cut|won|wrote|made|grew|drove|set|took|owned|shipped|[A-Za-z]+ed)\b/i;
 
-/** LaTeX resume -> marked-up plain text the line parser understands. */
-function texToText(src) {
-  const body = src.slice(src.indexOf("\\begin{document}") + 1 || 0).replace(/(^|[^\\])%.*$/gm, "$1");
-  // Read one {...} group starting at i (which must be "{"); returns [content, nextIndex].
-  const group = (s, i) => {
-    let depth = 0;
-    for (let j = i; j < s.length; j++) {
-      if (s[j] === "\\") { j++; continue; }
-      if (s[j] === "{") depth++;
-      else if (s[j] === "}" && --depth === 0) return [s.slice(i + 1, j), j + 1];
-    }
-    return [s.slice(i + 1), s.length];
-  };
-  const args = (s, i, n) => {
-    const out = [];
-    for (let k = 0; k < n; k++) {
-      while (i < s.length && /\s/.test(s[i])) i++;
-      if (s[i] !== "{") break;
-      const [g, next] = group(s, i);
-      out.push(g);
-      i = next;
-    }
-    return [out, i];
-  };
-  let out = "";
-  for (let i = 0; i < body.length; ) {
-    const m = body.slice(i).match(/^\\(section|resumeSubheading|resumeProjectHeading|resumeItem)\b/);
-    if (!m) { out += body[i++]; continue; }
-    i += m[0].length;
-    if (m[1] === "section") { const [[t], n] = args(body, i, 1); out += `\n## ${t}\n`; i = n; }
-    else if (m[1] === "resumeSubheading") { const [a, n] = args(body, i, 4); out += `\n${a[0]} ${a[1]}\n${a[2]} ${a[3]}\n`; i = n; }
-    else if (m[1] === "resumeProjectHeading") { const [a, n] = args(body, i, 2); out += `\n${a[0]} ${a[1]}\n`; i = n; }
-    else { const [[t], n] = args(body, i, 1); out += `\n• ${t}\n`; i = n; }
-  }
-  return out
-    .replace(/\\(begin|end)\{[^}]*\}(\[[^\]]*\])?/g, "")
-    .replace(/\\href\{[^}]*\}/g, "")
-    .replace(/\$\|\$/g, "|")
-    .replace(/\\\\/g, "\n")
-    .replace(/\\(&|%|\$|#|_)/g, "$1")
-    .replace(/\\[a-zA-Z]+\*?(\[[^\]]*\])?/g, "")
-    .replace(/[{}]/g, "")
-    .replace(/---/g, "—").replace(/--/g, "–").replace(/``|''/g, '"')
-    .replace(/[ \t]+/g, " ");
-}
-
 function htmlToText(html) {
   return html
     .replace(/<(style|script|head)[\s\S]*?<\/\1>/gi, "")
@@ -171,16 +125,16 @@ function htmlToText(html) {
     .replace(/[ \t]+/g, " ");
 }
 
-async function pdfToText(file) {
-  const { extractText, getDocumentProxy } = await import("unpdf");
-  const pdf = await getDocumentProxy(new Uint8Array(await readFile(file)));
-  const { text, totalPages } = await extractText(pdf, { mergePages: true });
-  return { text, pages: totalPages };
+/** Word resume -> the same text htmlToText gives. Inline tags go first so "<strong>x</strong>, y" keeps its spacing. */
+async function docxToText(file) {
+  const { default: mammoth } = await import("mammoth");
+  const { value } = await mammoth.convertToHtml({ path: file });
+  return htmlToText(value.replace(/<\/?(strong|em|u|a)\b[^>]*>/gi, ""));
 }
 
 /**
  * Split resume text into header + sections of entries with bullets. Handles bullet glyphs,
- * glyph-less PDFs (a new bullet starts with a past-tense verb) and "## Heading" markers.
+ * glyph-less plain text (a new bullet starts with a past-tense verb) and "## Heading" markers.
  */
 export function parseResume(text) {
   const lines = text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
@@ -204,12 +158,6 @@ export function parseResume(text) {
 
     // Skills: one entry per "Label: items" line, wrapped lines appended.
     if (/skill/i.test(sec.name)) {
-      // PDFs sometimes emit an underlined project heading out of order, after everything
-      // else; give it back to the project entry that was left with only a date.
-      if (/ \| /.test(raw) && !raw.includes(":")) {
-        const orphan = sections.flatMap((s) => s.entries).find((e) => /^\S+\.?\s+(19|20)\d\d$|^(19|20)\d\d$/.test(e.heading.trim()));
-        if (orphan) { orphan.heading = `${raw} ${orphan.heading}`; continue; }
-      }
       if (/^[^:]{2,40}:/.test(raw) || !sec.entries.length) newEntry(raw.replace(BULLET, ""));
       else entry.heading += " " + raw;
       continue;
@@ -273,20 +221,19 @@ function resumeChunks(parsed) {
 }
 
 /**
- * Add (or replace) a resume. file: .pdf, .tex, .html or .md/.txt. A copy is kept in
+ * Add (or replace) a resume. file: .docx, .html or .md/.txt. A copy is kept in
  * library/files so the index survives the original moving.
  */
 export async function addResume({ file, company = "", role = "", job_text = "", style_reference = false, label = "" }) {
   const abs = path.resolve(file);
   if (!existsSync(abs)) throw new Error(`No file at ${abs}`);
   const ext = path.extname(abs).toLowerCase();
-  let text, pages = null, tex = null;
-  if (ext === ".pdf") ({ text, pages } = await pdfToText(abs));
+  if (![".docx", ".html", ".htm", ".md", ".txt"].includes(ext)) throw new Error(`Can't read ${ext || "that file type"}: the library takes .docx, .html, .md or .txt.`);
+  let text;
+  if (ext === ".docx") text = await docxToText(abs);
   else {
     const raw = await readFile(abs, "utf8");
-    if (ext === ".tex") { tex = raw; text = texToText(raw); }
-    else if (ext === ".html" || ext === ".htm") text = htmlToText(raw);
-    else text = raw;
+    text = ext === ".md" || ext === ".txt" ? raw : htmlToText(raw);
   }
   const parsed = parseResume(text);
   if (!parsed.sections.length) throw new Error(`Couldn't find resume sections (Education, Experience, Projects, Skills) in ${abs}`);
@@ -299,11 +246,10 @@ export async function addResume({ file, company = "", role = "", job_text = "", 
   const doc = {
     id, type: "resume",
     title: label || path.basename(abs, ext),
-    company, role, source: abs, file: stored, pages,
+    company, role, source: abs, file: stored,
     style_reference: Boolean(style_reference),
     added: new Date().toISOString(),
     outline: outline(parsed),
-    tex: tex || undefined,
     job_text: job_text || undefined,
   };
   await indexChunks(doc, resumeChunks(parsed));
@@ -394,7 +340,7 @@ export async function similarResumes(jobText, k = 2) {
   if (jv) lists.push(resumes.map((d) => Math.max(d.vec ? dot(jv, d.vec) : 0, d.job_vec ? dot(jv, d.job_vec) : 0)));
   const fused = rrf(lists);
   const ranked = resumes.map((d, i) => ({ d, s: fused[i] })).sort((a, b) => b.s - a.s);
-  const view = ({ d, s }) => ({ id: d.id, title: d.title, company: d.company || undefined, role: d.role || undefined, score: s === undefined ? undefined : Math.round(s * 1e4) / 1e4, outline: d.outline, tex: d.tex });
+  const view = ({ d, s }) => ({ id: d.id, title: d.title, company: d.company || undefined, role: d.role || undefined, score: s === undefined ? undefined : Math.round(s * 1e4) / 1e4, outline: d.outline });
   const ref = resumes.find((d) => d.style_reference);
   return {
     style_reference: ref ? view({ d: ref }) : null,

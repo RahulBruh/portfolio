@@ -1,116 +1,75 @@
 /**
- * Renders a one-page LaTeX resume from profile.json plus projects from the jobapply bank,
- * in the layout of Rahul_Moka_Resume_EA (Jake Gutierrez's template, restyled): plain name,
- * status line, company/dates over an italic role, **bold** keywords, underlined project
- * links and tight bullet lists. Compiles to PDF when a TeX engine is installed and reports
+ * Renders a one-page Word resume (.docx) from profile.json plus projects from the jobapply
+ * bank, in the EA layout: plain name, status line, company/dates over an italic role,
+ * **bold** keywords, underlined project links and tight bullet lists. Word itself reports
  * the page count, since a resume has to fit on one page.
  */
 import { execFile } from "node:child_process";
-import { existsSync } from "node:fs";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
-import os from "node:os";
+import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { promisify } from "node:util";
+import {
+  AlignmentType, BorderStyle, Document, ExternalHyperlink, HeadingLevel, LevelFormat, Packer, Paragraph, Tab, TabStopType, TextRun,
+} from "docx";
 
 const run = promisify(execFile);
 
-// ---------- escaping ----------
-const SPECIAL = {
-  "\\": "\\textbackslash{}", "&": "\\&", "%": "\\%", "$": "\\$", "#": "\\#", "_": "\\_", "{": "\\{", "}": "\\}",
-  "~": "\\textasciitilde{}", "^": "\\textasciicircum{}", "<": "\\textless{}", ">": "\\textgreater{}", "|": "\\textbar{}",
-};
-const UNICODE = {
-  "–": "--", "—": "---", "‘": "`", "’": "'", "“": "``", "”": "''", "…": "\\ldots{}", "•": "\\textbullet{}",
-  "→": "$\\rightarrow$", "←": "$\\leftarrow$", "×": "$\\times$", "≈": "$\\approx$", "≥": "$\\geq$", "≤": "$\\leq$",
-  "±": "$\\pm$", "°": "$^\\circ$", "\u00a0": "~",
-};
+// ---------- layout (sizes in half-points, distances in twentieths of a point) ----------
+const FONT = "Times New Roman";
+const MARGIN = 720; // 0.5in on US Letter
+const TEXT_WIDTH = 12240 - 2 * MARGIN;
+const INDENT = 144; // entries sit slightly inside the section rules
+const SIZE = { name: 50, section: 24, entry: 22, body: 20 };
+const BULLETS = "resume-bullets";
 
-/** Escape plain text for LaTeX (the template has no fontenc, so < > | need commands too). */
-export function tex(s) {
-  return String(s ?? "")
-    .replace(/[\\&%$#_{}~^<>|]/g, (c) => SPECIAL[c])
-    .replace(/"([^"]*)"/g, "``$1''")
-    .replace(/[–—‘’“”…•→←×≈≥≤±°\u00a0]/g, (c) => UNICODE[c]);
-}
-
-/** tex() plus **bold** -> \textbf{bold}. */
-export const rich = (s) => tex(s).replace(/\*\*(.+?)\*\*/g, "\\textbf{$1}");
-
-const texUrl =(u) => String(u).replace(/[\\%#{}]/g, (c) => "\\" + c);
 const fullUrl = (u) => (/^[a-z]+:/i.test(u) ? u : "https://" + u);
-const shortUrl = (u) => String(u).replace(/^https?:\/\/(www\.)?/i, "").replace(/\/$/, "");
+const curly = (s) => String(s ?? "").replace(/"([^"]*)"/g, "“$1”");
 
-// ---------- template ----------
-const PREAMBLE = String.raw`\documentclass[letterpaper,11pt]{article}
-
-\usepackage{latexsym}
-\usepackage[empty]{fullpage}
-\usepackage{titlesec}
-\usepackage[usenames,dvipsnames]{color}
-\usepackage{enumitem}
-\usepackage[hidelinks]{hyperref}
-\usepackage{fancyhdr}
-\usepackage[english]{babel}
-\usepackage{tabularx}
-% pdfTeX only (MiKTeX/TeX Live pdflatex, Overleaf); skipped under XeTeX/tectonic.
-\ifdefined\pdfgentounicode
-  \input{glyphtounicode}
-  \pdfgentounicode=1
-\fi
-
-\pagestyle{fancy}
-\fancyhf{}
-\fancyfoot{}
-\renewcommand{\headrulewidth}{0pt}
-\renewcommand{\footrulewidth}{0pt}
-
-\addtolength{\oddsidemargin}{-0.5in}
-\addtolength{\evensidemargin}{-0.5in}
-\addtolength{\textwidth}{1in}
-\addtolength{\topmargin}{-.5in}
-\addtolength{\textheight}{1.0in}
-
-\urlstyle{same}
-\raggedbottom
-\raggedright
-\setlength{\tabcolsep}{0in}
-
-\titleformat{\section}{
-  \vspace{-4pt}\scshape\raggedright\large
-}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
-
-\newcommand{\resumeItem}[1]{
-  \item\small{
-    {#1 \vspace{-2pt}}
-  }
+/** "Cut **cost by 65%** today" -> runs with the marked parts in bold. */
+function rich(s, base = {}) {
+  return curly(s)
+    .split(/\*\*(.+?)\*\*/)
+    .map((part, i) => (part ? new TextRun({ ...base, text: part, bold: i % 2 === 1 || base.bold }) : null))
+    .filter(Boolean);
 }
 
-\newcommand{\resumeSubheading}[4]{
-  \vspace{-2pt}\item
-    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
-      \textbf{#1} & #2 \\
-      \textit{\small#3} & \textit{\small #4} \\
-    \end{tabular*}\vspace{-7pt}
+/** A line with left content and right-aligned content, as a real tab stop (no tables, so ATS parsers read it in order). */
+function splitLine(left, right, { after = 0, before = 0, rightRun = {} } = {}) {
+  return new Paragraph({
+    indent: { left: INDENT, right: INDENT },
+    spacing: { before, after },
+    keepNext: true,
+    tabStops: [{ type: TabStopType.RIGHT, position: TEXT_WIDTH - INDENT }],
+    children: [...left, ...(right ? [new TextRun({ ...rightRun, children: [new Tab(), curly(right)] })] : [])],
+  });
 }
 
-\newcommand{\resumeProjectHeading}[2]{
-    \item
-    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
-      \small#1 & #2 \\
-    \end{tabular*}\vspace{-7pt}
+const sectionHeading = (title) => new Paragraph({ heading: HeadingLevel.HEADING_1, children: [new TextRun(title)] });
+
+const subheading = (topLeft, topRight, bottomLeft, bottomRight) => [
+  splitLine([new TextRun({ text: curly(topLeft), bold: true, size: SIZE.entry })], topRight, { before: 50, rightRun: { size: SIZE.entry } }),
+  splitLine([new TextRun({ text: curly(bottomLeft), italics: true })], bottomRight, { rightRun: { italics: true } }),
+];
+
+const bullets = (list) =>
+  (list || []).map((b) => new Paragraph({ numbering: { reference: BULLETS, level: 0 }, indent: { right: INDENT }, children: rich(b) }));
+
+function projectHeading(p) {
+  const run = { text: curly(p.title), bold: true };
+  const title = p.link
+    ? new ExternalHyperlink({ link: fullUrl(p.link), children: [new TextRun({ ...run, underline: {} })] })
+    : new TextRun(run);
+  const tech = p.tech.length ? [new TextRun(" | "), new TextRun({ text: curly(p.tech.join(", ")), italics: true })] : [];
+  return splitLine([title, ...tech], p.dates, { before: 50 });
 }
 
-\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
-
-\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
-\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
-\newcommand{\resumeItemListStart}{\begin{itemize}[itemsep=0pt, parsep=0pt, topsep=2pt]}
-\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
-`;
-
-function items(bullets) {
-  if (!bullets || !bullets.length) return "";
-  return "      \\resumeItemListStart\n" + bullets.map((b) => `        \\resumeItem{${rich(b)}}`).join("\n") + "\n      \\resumeItemListEnd\n";
+function contactLine(contact) {
+  const out = [];
+  contact.forEach((c, i) => {
+    if (i) out.push(new TextRun(" | "));
+    out.push(c.url ? new ExternalHyperlink({ link: fullUrl(c.url), children: [new TextRun({ text: c.text, underline: {} })] }) : new TextRun(c.text));
+  });
+  return out;
 }
 
 /**
@@ -120,136 +79,131 @@ function items(bullets) {
  * @param {any[]} o.experience  profile.experience, with any per-job bullet rewrites already applied
  * @param {{ label: string, items: string }[]} o.skills
  * @param {string} [o.graduation]  graduation date for this resume; omit for each entry's first `graduation` option
- * @param {string} [o.comment]  goes at the top of the file
+ * @returns {Promise<Buffer>} the .docx file
  */
-export function renderResume({ profile, projects, experience, skills, graduation, comment }) {
-  const contact = profile.contact
-    .map((c) => (c.url ? `\\href{${texUrl(fullUrl(c.url))}}{\\underline{${tex(c.text)}}}` : tex(c.text)))
-    .join(" $|$ ");
+export async function renderResume({ profile, projects, experience, skills, graduation }) {
+  const body = [
+    new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: profile.name, bold: true, size: SIZE.name })] }),
+    ...(profile.headerNote ? [new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun(profile.headerNote)] })] : []),
+    new Paragraph({ alignment: AlignmentType.CENTER, children: contactLine(profile.contact) }),
+  ];
 
-  const out = [];
-  if (comment) out.push(comment.split("\n").map((l) => "% " + l).join("\n"), "");
-  out.push(PREAMBLE, "\\begin{document}", "");
-  out.push(
-    "\\begin{center}",
-    `    \\textbf{\\Huge ${tex(profile.name)}} \\\\ \\vspace{1pt}`,
-    ...(profile.headerNote ? [`    \\small ${tex(profile.headerNote)} \\\\ \\vspace{1pt}`] : []),
-    `    \\small ${contact}`,
-    "\\end{center}",
-    "",
-  );
-
-  out.push("\\section{Education}", "  \\resumeSubHeadingListStart");
+  body.push(sectionHeading("Education"));
   for (const e of profile.education) {
     // Entries with `graduation` options show "start – <chosen date>"; others keep fixed `dates`.
     const dates = e.graduation?.length ? `${e.start} – ${graduation || e.graduation[0]}` : e.dates;
-    out.push(`    \\resumeSubheading\n      {${tex(e.school)}}{${tex(e.location)}}\n      {${tex(e.degree)}}{${tex(dates)}}`);
-    out.push(items(e.bullets).trimEnd());
+    body.push(...subheading(e.school, e.location, e.degree, dates), ...bullets(e.bullets));
   }
-  out.push("  \\resumeSubHeadingListEnd", "");
 
   if (experience.length) {
-    out.push("\\section{Experience}", "  \\resumeSubHeadingListStart");
-    for (const x of experience) {
-      out.push(`    \\resumeSubheading\n      {${tex(x.company)}}{${tex(x.dates)}}\n      {${tex(x.title)}}{${tex(x.location || "")}}`);
-      out.push(items(x.bullets).trimEnd());
-    }
-    out.push("  \\resumeSubHeadingListEnd", "");
+    body.push(sectionHeading("Experience"));
+    for (const x of experience) body.push(...subheading(x.company, x.dates, x.title, x.location || ""), ...bullets(x.bullets));
   }
 
-  out.push("\\section{Projects}", "    \\resumeSubHeadingListStart");
-  for (const p of projects) {
-    const title = p.link ? `\\href{${texUrl(fullUrl(p.link))}}{\\underline{\\textbf{${tex(p.title)}}}}` : `\\textbf{${tex(p.title)}}`;
-    const tech = p.tech.length ? ` $|$ \\emph{${tex(p.tech.join(", "))}}` : "";
-    out.push(`      \\resumeProjectHeading\n          {${title}${tech}}{${tex(p.dates || "")}}`);
-    out.push(items(p.bullets).trimEnd());
-  }
-  out.push("    \\resumeSubHeadingListEnd", "");
+  body.push(sectionHeading("Projects"));
+  for (const p of projects) body.push(projectHeading(p), ...bullets(p.bullets));
 
-  out.push(
-    "\\section{Technical Skills}",
-    " \\begin{itemize}[leftmargin=0.15in, label={}]",
-    "    \\small{\\item{",
-    skills.map((s) => `     \\textbf{${tex(s.label)}}{: ${rich(s.items)}}`).join(" \\\\\n"),
-    "    }}",
-    " \\end{itemize}",
-    "",
-    "\\end{document}",
-    "",
-  );
-  return out.filter((l) => l !== "").join("\n").replace(/\n(\\section)/g, "\n\n$1").replace(/\n(\\end\{document\})/, "\n\n$1") + "\n";
+  body.push(sectionHeading("Technical Skills"));
+  for (const s of skills) {
+    body.push(new Paragraph({ indent: { left: INDENT, right: INDENT }, children: [new TextRun({ text: curly(s.label), bold: true }), new TextRun(": "), ...rich(s.items)] }));
+  }
+
+  // The file goes to employers, so its properties name only the candidate.
+  const doc = new Document({
+    creator: profile.name,
+    lastModifiedBy: profile.name,
+    title: `${profile.name} Resume`,
+    compatibility: { version: 15 },
+    styles: {
+      default: {
+        document: { run: { font: FONT, size: SIZE.body }, paragraph: { spacing: { before: 0, after: 0, line: 240 } } },
+        heading1: {
+          run: { font: FONT, size: SIZE.section, smallCaps: true, color: "000000" },
+          paragraph: {
+            spacing: { before: 110, after: 30 },
+            keepNext: true,
+            border: { bottom: { style: BorderStyle.SINGLE, size: 6, space: 1, color: "000000" } },
+          },
+        },
+      },
+    },
+    numbering: {
+      config: [{
+        reference: BULLETS,
+        levels: [{ level: 0, format: LevelFormat.BULLET, text: "•", alignment: AlignmentType.LEFT, style: { paragraph: { indent: { left: INDENT + 260, hanging: 180 } } } }],
+      }],
+    },
+    sections: [{
+      properties: { page: { size: { width: 12240, height: 15840 }, margin: { top: MARGIN, bottom: MARGIN, left: MARGIN, right: MARGIN, header: 0, footer: 0 } } },
+      children: body,
+    }],
+  });
+  return Packer.toBuffer(doc);
 }
 
 // ---------- files ----------
 const safeName = (s) => String(s).replace(/[<>:"/\\|?*\x00-\x1f]/g, "").replace(/\s+/g, " ").trim().replace(/[. ]+$/, "").slice(0, 80);
 
-/** Write the .tex into <dir>/<Company> - <Role>/ and try to build the PDF there. */
-export async function saveResume({ dir, company, role, name, source }) {
+/** Write the .docx into <dir>/<Company> - <Role>/ and have Word count its pages. */
+export async function saveResume({ dir, company, role, name, buffer }) {
   const folder = path.join(dir, safeName(`${company} - ${role}`) || "Resume");
   await mkdir(folder, { recursive: true });
-  const base = `${safeName(name).replace(/\s+/g, "_") || "Resume"}_Resume`;
-  const texPath = path.join(folder, base + ".tex");
-  await writeFile(texPath, source, "utf8");
-  return { folder, texPath, ...(await compile(folder, base)) };
-}
-
-/** pdflatex on PATH, MiKTeX's default per-user install, or tectonic (PATH or %LOCALAPPDATA%\Programs\tectonic). */
-async function findEngine() {
-  const programs = path.join(process.env.LOCALAPPDATA || path.join(os.homedir(), "AppData", "Local"), "Programs");
-  const miktex = path.join(programs, "MiKTeX", "miktex", "bin", "x64", "pdflatex.exe");
-  const tectonic = path.join(programs, "tectonic", "tectonic.exe");
-  const candidates = [
-    process.env.JOBAPPLY_LATEX,
-    "pdflatex",
-    existsSync(miktex) ? miktex : null,
-    "tectonic",
-    existsSync(tectonic) ? tectonic : null,
-  ].filter(Boolean);
-  for (const c of candidates) {
-    try {
-      await run(c, ["--version"], { windowsHide: true, timeout: 15000 });
-      return c;
-    } catch { /* not installed */ }
-  }
-  return null;
-}
-
-async function compile(folder, base) {
-  const engine = await findEngine();
-  if (!engine) {
-    return {
-      pdfPath: null,
-      compileNote: "No LaTeX engine found, so only the .tex was written. Install MiKTeX (winget install MiKTeX.MiKTeX) or tectonic, " +
-        "or upload the .tex to Overleaf. Set JOBAPPLY_LATEX to point at an engine elsewhere.",
-    };
-  }
-  const isTectonic = /tectonic/i.test(path.basename(engine));
-  const args = isTectonic
-    ? ["--keep-logs", base + ".tex"]
-    : ["-interaction=nonstopmode", "-halt-on-error", "-file-line-error", base + ".tex"];
-  const pdfPath = path.join(folder, base + ".pdf");
+  const docxPath = path.join(folder, `${safeName(name).replace(/\s+/g, "_") || "Resume"}_Resume.docx`);
   try {
-    await run(engine, args, { cwd: folder, windowsHide: true, timeout: 120000, maxBuffer: 16 * 1024 * 1024 });
+    await writeFile(docxPath, buffer);
   } catch (err) {
-    const log = await readFile(path.join(folder, base + ".log"), "utf8").catch(() => String(err.stdout || err.message));
-    const errors = log.split(/\r?\n/).filter((l) => /^!|:\d+:|Error/.test(l)).slice(0, 12).join("\n");
-    return { pdfPath: null, compileNote: `${path.basename(engine)} failed:\n${errors || log.slice(-2000)}` };
+    if (err.code === "EBUSY" || err.code === "EPERM") throw new Error(`Can't overwrite ${docxPath}; it's probably open in Word. Close it and call write_resume again.`);
+    throw err;
   }
-  if (!existsSync(pdfPath)) return { pdfPath: null, compileNote: `${path.basename(engine)} ran but wrote no PDF.` };
-  const { pages, overflow } = await pageInfo(pdfPath);
-  return {
-    pdfPath,
-    pages,
-    overflow: overflow || undefined,
-    compileNote: pages > 1 ? `The PDF is ${pages} pages. Trim bullets or drop a project to fit one page; "overflow" is the text past page 1.` : "Compiled to one page.",
-  };
+  return { folder, docxPath, ...(await pageInfo(docxPath)) };
 }
 
-/** Page count, and the text that spilled past page 1. */
-export async function pageInfo(pdfPath) {
-  const { extractText, getDocumentProxy } = await import("unpdf");
-  const pdf = await getDocumentProxy(new Uint8Array(await readFile(pdfPath)));
-  if (pdf.numPages <= 1) return { pages: pdf.numPages, overflow: "" };
-  const { text } = await extractText(pdf, { mergePages: false });
-  return { pages: pdf.numPages, overflow: text.slice(1).join("\n").trim() };
+// Runs against a private, hidden Word instance. The path arrives through the environment so
+// nothing in a company or role name can reach the script.
+const WORD_PAGE_COUNT = `
+$ErrorActionPreference = 'Stop'
+$ProgressPreference = 'SilentlyContinue'
+[Console]::OutputEncoding = [Text.UTF8Encoding]::new($false)
+$word = $null
+$doc = $null
+try {
+  $word = New-Object -ComObject Word.Application
+  $word.Visible = $false
+  $word.DisplayAlerts = 0
+  $doc = $word.Documents.Open([ref]$env:JOBAPPLY_DOCX, [ref]$false, [ref]$true, [ref]$false)
+  $doc.ActiveWindow.View.Type = 3
+  $doc.Repaginate()
+  # Information(4), the laid-out page count; ComputeStatistics can report a stale 1 in a hidden window.
+  $pages = $doc.Content.Information(4)
+  $overflow = ''
+  if ($pages -gt 1) { $overflow = $doc.Range($doc.GoTo([ref]1, [ref]1, [ref]2).Start, $doc.Content.End).Text }
+  @{ pages = $pages; overflow = $overflow } | ConvertTo-Json -Compress
+} catch {
+  @{ error = $_.Exception.Message } | ConvertTo-Json -Compress
+} finally {
+  if ($doc) { try { $doc.Close([ref]0) } catch {} }
+  if ($word) { try { $word.Quit([ref]0) } catch {}; [void][Runtime.InteropServices.Marshal]::ReleaseComObject($word) }
+}
+`;
+
+/** Page count and the text past page 1, measured by Word. Pages stay undefined when Word can't be run. */
+export async function pageInfo(docxPath) {
+  const unverified = (why) => ({ pageNote: `Page count NOT verified (${why}). Open the file in Word and confirm it fits on one page.` });
+  if (process.platform !== "win32") return unverified("needs Microsoft Word on Windows");
+  try {
+    const { stdout } = await run(
+      "powershell.exe",
+      ["-NoProfile", "-NonInteractive", "-EncodedCommand", Buffer.from(WORD_PAGE_COUNT, "utf16le").toString("base64")],
+      { env: { ...process.env, JOBAPPLY_DOCX: docxPath }, windowsHide: true, timeout: 90000 },
+    );
+    const { pages, overflow, error } = JSON.parse(stdout);
+    if (error) return unverified(`Word couldn't be run: ${error}`);
+    return {
+      pages,
+      overflow: pages > 1 ? String(overflow).replace(/[\r\x07]+/g, "\n").trim() : undefined,
+      pageNote: pages > 1 ? `Word lays this out on ${pages} pages. Trim bullets or drop a project to fit one page; "overflow" is the text past page 1.` : "Word confirms one page.",
+    };
+  } catch (err) {
+    return unverified(`Word couldn't be run: ${String(err.stderr || err.message).slice(0, 300)}`);
+  }
 }
