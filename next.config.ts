@@ -1,8 +1,17 @@
 import type { NextConfig } from "next";
 
+const KESTREL_ORIGIN = "https://kestrel-spend.higgsfield.app";
+
 const nextConfig: NextConfig = {
   async rewrites() {
-    return [{ source: "/availability", destination: "/availability.html" }];
+    return [
+      { source: "/availability", destination: "/availability.html" },
+      // Kestrel (spend console project) is hosted on Higgsfield and served
+      // under this path. The app itself is built with the /kestrel-spend
+      // basepath, so pages, assets and server functions all stay in it.
+      { source: "/kestrel-spend", destination: `${KESTREL_ORIGIN}/kestrel-spend` },
+      { source: "/kestrel-spend/:path*", destination: `${KESTREL_ORIGIN}/kestrel-spend/:path*` },
+    ];
   },
   // /jobapply serves these files from route handlers, so tracing needs telling.
   outputFileTracingIncludes: {

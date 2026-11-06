@@ -1,6 +1,65 @@
 [
   {
     "bullets": [
+      "Built a spend console in React 19, TypeScript and TanStack Start (Vite) with a hand-rolled virtualized grid rendering about 30 DOM rows for 50,000 transactions, plus a ⌘K fuzzy command palette and a full keyboard model (j/k navigation, shift-range select, undo/redo)",
+      "Moved filtering, sorting and aggregation into a Web Worker over typed-array columns (700 KB for 50k rows), answering typical filters in 0.5 to 2 ms and a full 50,000-row sort in about 10 ms; wrote a tokenizing query language (cat:travel >500 is:missing) with live syntax highlighting and autocomplete",
+      "Designed Talon, a token-based design system with a documented component library, and persisted optimistic bulk edits as an append-only event log in Cloudflare D1 with computed inverses for unlimited undo, covered by 9 unit tests"
+    ],
+    "category": "Frontend",
+    "createdAt": 1793897120717,
+    "dates": "Nov. 2026",
+    "example": false,
+    "link": "https://rahulmoka.com/kestrel-spend",
+    "role": "Solo developer",
+    "summary": "Keyboard-first spend console in React 19 + TypeScript that virtualizes, filters and bulk-edits 50,000 card transactions off the main thread, built on a custom design system.",
+    "tech": [
+      "TypeScript",
+      "React",
+      "Vite",
+      "Tailwind",
+      "Web Workers",
+      "Cloudflare Workers",
+      "Design Systems",
+      "Unit Testing"
+    ],
+    "title": "Kestrel: Keyboard-First Spend Console",
+    "type": "Personal",
+    "updatedAt": 1793898157432,
+    "id": "kestrel-keyboard-first-spend-console"
+  },
+  {
+    "bullets": [
+      "Built a layer-7 HTTP load balancer and reverse proxy in Go (standard library plus yaml.v3), selecting backends in a custom RoundTripper beneath httputil.ReverseProxy so header handling, streaming and upgrades stayed in the standard library",
+      "Implemented round-robin, nginx-style smooth weighted round-robin and weighted least-connections; least-connections delivered 2.7x round-robin's throughput (7,182 vs 2,621 req/s) and cut p90 latency from 51.7 ms to 8.5 ms with one 50 ms backend in the pool. Also fixed a weighted round-robin bug where leftover weight debt sent request bursts to one backend after the pool changed",
+      "Designed layered failure handling (active health checks with rise/fall thresholds, passive checks on live traffic, and retries of idempotent requests on a different backend), cutting failed requests when a backend was killed under load from 4,327 to 0 and detection time from 2,979 ms to 18 ms",
+      "Instrumented the proxy with lock-free, atomics-based Prometheus metrics (latency histogram, per-backend responses and errors, up and in-flight gauges, state transitions) and a JSON admin status API on a separate port",
+      "Wrote 44 test cases at 92.7% statement coverage, run with the Go race detector in GitHub Actions alongside a Docker Compose smoke test that stops a backend and asserts zero client errors",
+      "Packaged as a multi-stage distroless Docker image with a Compose demo, a closed-loop load generator and a reproducible benchmark suite, measuring 8,562 req/s through the proxy vs 23,177 req/s direct on a shared 12-thread laptop, delivered through 8 issue-linked PRs"
+    ],
+    "category": "Backend",
+    "createdAt": 1792868293411,
+    "dates": "Oct. 2026",
+    "example": false,
+    "link": "https://github.com/RahulBruh/go-load-balancer",
+    "role": "Software Engineer",
+    "summary": "Layer-7 load balancer in Go with three balancing strategies, active and passive health checks, retries and Prometheus metrics, benchmarked under load and failure.",
+    "tech": [
+      "Go",
+      "Docker",
+      "Prometheus",
+      "GitHub Actions",
+      "CI/CD",
+      "Linux",
+      "Unit Testing",
+      "Algorithms"
+    ],
+    "title": "HTTP Load Balancer & Reverse Proxy in Go",
+    "type": "Personal",
+    "updatedAt": 1792868293411,
+    "id": "http-load-balancer-reverse-proxy-in-go"
+  },
+  {
+    "bullets": [
       "Fine-tuned DistilBERT (Hugging Face, PyTorch) to categorize card-transaction descriptors, reaching 45.3% ± 3.1% accuracy on unseen merchants across 3 seeds vs. 17.6% for a TF-IDF + logistic regression baseline",
       "Built a data pipeline that cleans raw descriptors and engineers features, then resolves merchants with RapidFuzz fuzzy matching at 95.9% top-1 on heavily corrupted text vs. 57.8% for sentence embeddings",
       "Routed low-confidence predictions to human review (80% accuracy on auto-accepted unseen merchants at a 0.8 threshold), served via FastAPI with a model card, 21 pytest tests and GitHub Actions CI"
@@ -117,7 +176,7 @@
   },
   {
     "bullets": [
-      "Built with a 3-person team at Lincoln Financial's CodeLinc 11 hackathon: an AI assistant that turns a natural conversation into a personalized life-insurance coverage estimate, deployed on AWS",
+      "Built with a 4-person team at Lincoln Financial's CodeLinc 11 hackathon: an AI assistant that turns a natural conversation into a personalized life-insurance coverage estimate, deployed on AWS",
       "Developed a React interface with OpenAI API chat and ElevenLabs voice that visualizes the coverage math, compares term vs. whole life and runs \"what if\" scenarios before exporting a summary"
     ],
     "category": "Machine Learning / AI",
@@ -125,7 +184,7 @@
     "dates": "Oct. 2026",
     "example": false,
     "link": "https://github.com/frsfzl/codelinc11",
-    "role": "3-person team",
+    "role": "4-person team",
     "summary": "Voice-enabled AI assistant that turns a conversation into a personalized life insurance coverage estimate (Lincoln Financial CodeLinc 11).",
     "tech": [
       "React",
@@ -137,7 +196,7 @@
     ],
     "title": "Linc: AI Life Insurance Assistant",
     "type": "Hackathon",
-    "updatedAt": 1791818893925,
+    "updatedAt": 1792858430500,
     "id": "linc-codelinc11"
   },
   {
@@ -196,29 +255,6 @@
     "type": "Personal",
     "updatedAt": 1791329995000,
     "id": "sdxl-cyberpunk-lora"
-  },
-  {
-    "bullets": [
-      "Built a Next.js + TypeScript + Tailwind portfolio with project, resume and RAG demo pages",
-      "Added a server-side API route that calls a RunPod serverless GPU endpoint to generate images from my SDXL LoRA live in the browser"
-    ],
-    "category": "Frontend",
-    "createdAt": 1791329994000,
-    "dates": "Aug. 2026 – Oct. 2026",
-    "example": false,
-    "link": "https://rahulmoka.com",
-    "role": "Solo developer",
-    "summary": "rahulmoka.com: portfolio with project pages, resume and live AI demos.",
-    "tech": [
-      "Next.js",
-      "React",
-      "TypeScript",
-      "Tailwind"
-    ],
-    "title": "Personal Portfolio Website",
-    "type": "Personal",
-    "updatedAt": 1791329994000,
-    "id": "portfolio-site"
   },
   {
     "bullets": [
@@ -309,31 +345,6 @@
     "type": "Personal",
     "updatedAt": 1791329991000,
     "id": "remote-dev-pi"
-  },
-  {
-    "bullets": [
-      "Built a client's jewelry storefront with React, Vite and React Router",
-      "Integrated Stripe payments through an Express server that creates checkout sessions with the secret key kept server-side"
-    ],
-    "category": "Full-Stack",
-    "createdAt": 1791329990000,
-    "dates": "Feb. 2026 – Mar. 2026",
-    "example": false,
-    "link": "https://github.com/RahulBruh/Vintage-Vault-Website",
-    "role": "Solo developer",
-    "summary": "Online jewelry store built for a client, with Stripe checkout.",
-    "tech": [
-      "React",
-      "Vite",
-      "Node.js",
-      "Express",
-      "Stripe",
-      "JavaScript"
-    ],
-    "title": "Vintage Vault E-commerce Site",
-    "type": "Freelance",
-    "updatedAt": 1791329990000,
-    "id": "vintage-vault"
   },
   {
     "bullets": [
