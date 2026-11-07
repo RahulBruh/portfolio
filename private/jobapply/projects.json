@@ -62,19 +62,23 @@
     "bullets": [
       "Fine-tuned DistilBERT (Hugging Face, PyTorch) to categorize card-transaction descriptors, reaching 45.3% ± 3.1% accuracy on unseen merchants across 3 seeds vs. 17.6% for a TF-IDF + logistic regression baseline",
       "Built a data pipeline that cleans raw descriptors and engineers features, then resolves merchants with RapidFuzz fuzzy matching at 95.9% top-1 on heavily corrupted text vs. 57.8% for sentence embeddings",
-      "Routed low-confidence predictions to human review (80% accuracy on auto-accepted unseen merchants at a 0.8 threshold), served via FastAPI with a model card, 21 pytest tests and GitHub Actions CI"
+      "Reframed merchant resolution as retrieve-then-rerank, training a LightGBM LambdaMART ranker on 14 similarity features over a top-10 shortlist; raised hard-noise top-1 from 95.9% to 98.3% (misses 33 → 14 of 800) and MRR@10 from 0.977 to 0.991 across 3 seeds",
+      "Evaluated ranking with top-1, MRR@10, NDCG@10 and Recall@10 on 20 merchants held out of training, where the reranker tied fuzzy matching (97.0%), and traced 97% of its learned gain to a single score-gap feature",
+      "Routed low-confidence predictions to human review (80% accuracy on auto-accepted unseen merchants at a 0.8 threshold), served via FastAPI with a model card, 27 pytest tests and GitHub Actions CI"
     ],
     "category": "Machine Learning / AI",
     "createdAt": 1791814388194,
-    "dates": "Oct. 2026",
+    "dates": "Oct. 2026 – Nov. 2026",
     "example": false,
     "link": "https://github.com/RahulBruh/transaction-nlp",
     "role": "Solo developer",
-    "summary": "NLP pipeline that maps messy card-statement descriptors to merchants and spend categories with human-review routing, trained and evaluated on synthetic data.",
+    "summary": "NLP pipeline that maps messy card-statement descriptors to merchants and spend categories with human-review routing and a LambdaMART reranking stage, trained and evaluated on synthetic data.",
     "tech": [
       "Python",
       "PyTorch",
       "Hugging Face",
+      "LightGBM",
+      "Learning to Rank",
       "scikit-learn",
       "NLP",
       "FastAPI",
@@ -83,7 +87,7 @@
     ],
     "title": "Transaction NLP: Merchant Matching & Categorization",
     "type": "Personal",
-    "updatedAt": 1791814388194,
+    "updatedAt": 1794064605019,
     "id": "transaction-nlp-merchant-matching-categorization"
   },
   {
