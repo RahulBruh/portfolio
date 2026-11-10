@@ -130,7 +130,7 @@
     "createdAt": 1791330000000,
     "dates": "Oct. 2026",
     "example": false,
-    "link": "https://github.com/RahulBruh/skills-support-agent",
+    "link": "https://claude.ai/artifact/RamK4pxeNPBKA4tSJDqmwH",
     "role": "Solo developer",
     "summary": "Plug-and-play support-triage agent on Amazon Bedrock where each domain is a declarative SKILL.md file, backed by MCP tools deployed to AWS Lambda with CDK.",
     "tech": [
@@ -148,7 +148,7 @@
     ],
     "title": "Skills-Driven Support Agent",
     "type": "Personal",
-    "updatedAt": 1791818887494,
+    "updatedAt": 1794349623127,
     "id": "skills-support-agent"
   },
   {
