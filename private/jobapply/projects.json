@@ -129,6 +129,7 @@
     "category": "Machine Learning / AI",
     "createdAt": 1791330000000,
     "dates": "Oct. 2026",
+    "demo": "https://claude.ai/artifact/RamK4pxeNPBKA4tSJDqmwH",
     "example": false,
     "link": "https://github.com/RahulBruh/skills-support-agent",
     "role": "Solo developer",
@@ -148,7 +149,7 @@
     ],
     "title": "Skills-Driven Support Agent",
     "type": "Personal",
-    "updatedAt": 1794429899967,
+    "updatedAt": 1794430013362,
     "id": "skills-support-agent"
   },
   {
