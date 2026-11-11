@@ -161,7 +161,7 @@
     "createdAt": 1791329999000,
     "dates": "Oct. 2026",
     "example": false,
-    "link": "https://claude.ai/artifact/QoB56gHsNM6YG6FmLPyNMq",
+    "link": "https://github.com/RahulBruh/agent-eval-harness",
     "role": "Solo developer",
     "summary": "CLI eval harness that benchmarks agent variants on accuracy, tokens, cost and latency, with a CI regression gate.",
     "tech": [
@@ -177,7 +177,7 @@
     ],
     "title": "Agent Evaluation & Benchmarking Harness",
     "type": "Personal",
-    "updatedAt": 1794349613787,
+    "updatedAt": 1794429895429,
     "id": "agent-eval-harness"
   },
   {
