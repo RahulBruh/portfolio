@@ -415,6 +415,7 @@
     "category": "Other",
     "createdAt": 1791329988000,
     "dates": "Sep. 2025",
+    "demo": "https://rahulmoka.com/projects/astar-route-search",
     "example": false,
     "link": "https://github.com/RahulBruh/Map_Route_Search_Algorithm",
     "role": "",
@@ -426,7 +427,7 @@
     ],
     "title": "A* Route Search",
     "type": "Personal",
-    "updatedAt": 1793981098857,
+    "updatedAt": 1794432006228,
     "id": "astar-route-search"
   },
   {
