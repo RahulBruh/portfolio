@@ -224,4 +224,23 @@ export const PROJECTS: Project[] = [
       "Engineered the back-end interface with Flask and Google Places API, and Yelp API, ensuring an intuitive user experience, completed in 18 hours with a 4-person team under a strict 24-hour deadline.",
     ],
   },
+  {
+    id: "astar-route-search",
+    title: "A* Route Search",
+    tag: "Algorithms · Sep 2025",
+    shortDesc:
+      "Fastest-route search over real downtown Nashville OpenStreetMap roads, comparing BFS, DFS, Dijkstra and A*, with an interactive visualizer you can run in the browser.",
+    description:
+      "A route planner built on raw OpenStreetMap data for downtown Nashville. The .osm XML is parsed into a directed road graph (one-way streets included) where every road class carries a speed, so edges cost travel time rather than distance. BFS, DFS, Dijkstra and A* all run on the same graph and the chosen route is exported as GPX to overlay in JOSM. The live demo above runs the same four algorithms on a grid so you can watch how each one explores.",
+    img: "/assets/astar-route-search.svg",
+    tech: ["Python", "A* / Dijkstra", "BFS / DFS", "OpenStreetMap", "Haversine", "pytest", "TypeScript", "React"],
+    github: "https://github.com/RahulBruh/map_route_search_algorithm",
+    highlights: [
+      "Parsed OpenStreetMap XML for downtown Nashville into an adjacency-list road graph of about 62,000 nodes and 80,000 directed segments, keeping only drivable highway types and honoring oneway=yes/-1.",
+      "Costed every edge as haversine distance divided by the road-class speed limit, and gave A* an admissible heuristic (straight-line distance at the top speed), so it returns the true fastest route.",
+      "On the same trip, A* found the identical 2.9-minute route as Dijkstra while expanding 2,458 nodes instead of 7,857 (about 3× fewer); BFS returned a slower fewest-segments route and DFS a 27-mile detour.",
+      "Wrote pytest tests that check one-way handling, unreachable targets, the haversine distance against a known city pair, and that A* matches Dijkstra's route cost on 50 random weighted graphs.",
+      "Built this page's interactive visualizer in React and TypeScript: draw walls and weighted traffic cells, drag the endpoints, and compare cells explored and path cost across all four algorithms on one map.",
+    ],
+  },
 ];

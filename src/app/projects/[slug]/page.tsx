@@ -5,6 +5,7 @@ import { PROJECTS } from "@/data/projects";
 import ProjectDetailHero from "@/components/project-detail/ProjectDetailHero";
 import OtherProjectsSidebar from "@/components/project-detail/OtherProjectsSidebar";
 import SdxlLoraDemo from "@/components/project-detail/SdxlLoraDemo";
+import PathfindingDemo from "@/components/project-detail/PathfindingDemo";
 import { GitHubIcon } from "@/components/shared/icons";
 
 export function generateStaticParams() {
@@ -34,6 +35,11 @@ export default async function ProjectPage(props: PageProps<"/projects/[slug]">) 
       {project.id === "sdxl-lora" && (
         <div className="max-w-[1152px] mx-auto px-6 pt-16">
           <SdxlLoraDemo />
+        </div>
+      )}
+      {project.id === "astar-route-search" && (
+        <div className="max-w-[1152px] mx-auto px-6 pt-16">
+          <PathfindingDemo />
         </div>
       )}
       <div
