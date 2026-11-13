@@ -1,6 +1,30 @@
 [
   {
     "bullets": [
+      "Automated contract generation for **30+ clients** via a **Next.js, React, and Node.js** pipeline, saving **30 minutes per contract** by parsing form state into server-side templates and PDFs",
+      "Refactored a complex React codebase, fixing **20 critical bugs** and resolving performance issues in an unorganized project"
+    ],
+    "category": "Full-Stack",
+    "createdAt": 1794586060771,
+    "dates": "Jan. 2025 – Present",
+    "demo": "",
+    "example": false,
+    "link": "https://www.westtn.consulting/en",
+    "role": "Software Engineer Intern",
+    "summary": "Full-stack internship automating contract generation and cleaning up a client's React codebase for a consulting firm.",
+    "tech": [
+      "Next.js",
+      "React",
+      "Node.js",
+      "JavaScript"
+    ],
+    "title": "West TN Consulting",
+    "type": "Internship",
+    "updatedAt": 1794586060771,
+    "id": "west-tn-consulting"
+  },
+  {
+    "bullets": [
       "Built a C++20 limit order book with price-time priority matching (limit, market, IOC, cancel, modify), using intrusive FIFO queues for O(1) cancels, an object pool and an open-addressing id map so the hot path makes zero heap allocations",
       "Replaced std::map price levels with a tick-indexed array and 64-bit occupancy bitset, raising throughput to 58–63M msgs/s vs 45–50M (1.22–1.33x) on a 5M-message replay against a ~5,000-order book",
       "Verified correctness with 57 GoogleTest tests and a differential test replaying ~1.15M random operations against a naive reference book with identical event streams required, run under ASan/UBSan on GCC and Clang in GitHub Actions"
