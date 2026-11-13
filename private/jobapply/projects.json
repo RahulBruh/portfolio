@@ -240,6 +240,7 @@
     "category": "Machine Learning / AI",
     "createdAt": 1791329997000,
     "dates": "Oct. 2026",
+    "demo": "https://www.linkedin.com/feed/update/urn:li:ugcPost:7512862873019248641/",
     "example": false,
     "link": "https://github.com/frsfzl/codelinc11",
     "role": "4-person team",
@@ -254,7 +255,7 @@
     ],
     "title": "Linc: AI Life Insurance Assistant",
     "type": "Hackathon",
-    "updatedAt": 1792858430500,
+    "updatedAt": 1794586169752,
     "id": "linc-codelinc11"
   },
   {
