@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675">
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1200" y2="675" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#080C10"/><stop offset="1" stop-color="#0F1A22"/></linearGradient>
+<radialGradient id="glow" cx="330" cy="330" r="330" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#00D4FF" stop-opacity="0.12"/><stop offset="1" stop-color="#00D4FF" stop-opacity="0"/></radialGradient></defs>
+<rect width="1200" height="675" fill="url(#bg)"/>
+<circle cx="330" cy="330" r="330" fill="url(#glow)"/>
+<polygon points="330.0,54.0 569.0,192.0 330.0,330.0 91.0,192.0" fill="#05070A"/>
+<polygon points="91.0,192.0 330.0,330.0 330.0,606.0 91.0,468.0" fill="#05070A"/>
+<polygon points="330.0,330.0 569.0,192.0 569.0,468.0 330.0,606.0" fill="#05070A"/>
+<polygon points="330.0,60.4 398.5,100.0 330.0,139.6 261.5,100.0" fill="#E0313C"/>
+<polygon points="96.6,201.7 165.1,241.2 165.1,320.3 96.6,280.8" fill="#FFD43B"/>
+<polygon points="335.6,333.2 404.1,293.7 404.1,372.8 335.6,412.3" fill="#F4F5F7"/>
+<polygon points="409.7,106.4 478.2,146.0 409.7,185.6 341.2,146.0" fill="#1FAE55"/>
+<polygon points="176.2,247.7 244.7,287.2 244.7,366.3 176.2,326.8" fill="#F4F5F7"/>
+<polygon points="415.3,287.2 483.8,247.7 483.8,326.8 415.3,366.3" fill="#1FAE55"/>
+<polygon points="489.3,152.4 557.9,192.0 489.3,231.6 420.8,192.0" fill="#F4F5F7"/>
+<polygon points="255.9,293.7 324.4,333.2 324.4,412.3 255.9,372.8" fill="#1FAE55"/>
+<polygon points="494.9,241.2 563.4,201.7 563.4,280.8 494.9,320.3" fill="#1FAE55"/>
+<polygon points="250.3,106.4 318.8,146.0 250.3,185.6 181.8,146.0" fill="#FFD43B"/>
+<polygon points="96.6,293.7 165.1,333.2 165.1,412.3 96.6,372.8" fill="#FF8A1F"/>
+<polygon points="335.6,425.2 404.1,385.7 404.1,464.8 335.6,504.3" fill="#FFD43B"/>
+<polygon points="330.0,152.4 398.5,192.0 330.0,231.6 261.5,192.0" fill="#F4F5F7"/>
+<polygon points="176.2,339.7 244.7,379.2 244.7,458.3 176.2,418.8" fill="#1FAE55"/>
+<polygon points="415.3,379.2 483.8,339.7 483.8,418.8 415.3,458.3" fill="#E0313C"/>
+<polygon points="409.7,198.4 478.2,238.0 409.7,277.6 341.2,238.0" fill="#E0313C"/>
+<polygon points="255.9,385.7 324.4,425.2 324.4,504.3 255.9,464.8" fill="#2F6FE4"/>
+<polygon points="494.9,333.2 563.4,293.7 563.4,372.8 494.9,412.3" fill="#1FAE55"/>
+<polygon points="170.7,152.4 239.2,192.0 170.7,231.6 102.1,192.0" fill="#FF8A1F"/>
+<polygon points="96.6,385.7 165.1,425.2 165.1,504.3 96.6,464.8" fill="#1FAE55"/>
+<polygon points="335.6,517.2 404.1,477.7 404.1,556.8 335.6,596.3" fill="#1FAE55"/>
+<polygon points="250.3,198.4 318.8,238.0 250.3,277.6 181.8,238.0" fill="#E0313C"/>
+<polygon points="176.2,431.7 244.7,471.2 244.7,550.3 176.2,510.8" fill="#FFD43B"/>
+<polygon points="415.3,471.2 483.8,431.7 483.8,510.8 415.3,550.3" fill="#FF8A1F"/>
+<polygon points="330.0,244.4 398.5,284.0 330.0,323.6 261.5,284.0" fill="#FF8A1F"/>
+<polygon points="255.9,477.7 324.4,517.2 324.4,596.3 255.9,556.8" fill="#FF8A1F"/>
+<polygon points="494.9,425.2 563.4,385.7 563.4,464.8 494.9,504.3" fill="#2F6FE4"/>
+<text x="660" y="150" font-family="'JetBrains Mono', Consolas, monospace" font-size="18" fill="#00D4FF" letter-spacing="3">TWO-PHASE · 20 MOVES · 62 MS</text>
+<g font-family="'JetBrains Mono', Consolas, monospace" font-size="20">
+<rect x="660" y="200" width="80" height="48" fill="#0B0F14" stroke="rgba(255,255,255,0.10)" stroke-width="1"/>
+<text x="700" y="231" text-anchor="middle" fill="#4A5462">F</text>
+<rect x="752" y="200" width="80" height="48" fill="#0B0F14" stroke="rgba(255,255,255,0.10)" stroke-width="1"/>
+<text x="792" y="231" text-anchor="middle" fill="#4A5462">U&#8217;</text>
+<rect x="844" y="200" width="80" height="48" fill="#0B0F14" stroke="rgba(255,255,255,0.10)" stroke-width="1"/>
+<text x="884" y="231" text-anchor="middle" fill="#4A5462">D</text>
+<rect x="936" y="200" width="80" height="48" fill="#0B0F14" stroke="rgba(255,255,255,0.10)" stroke-width="1"/>
+<text x="976" y="231" text-anchor="middle" fill="#4A5462">R2</text>
+<rect x="1028" y="200" width="80" height="48" fill="#0B0F14" stroke="rgba(255,255,255,0.10)" stroke-width="1"/>
+<text x="1068" y="231" text-anchor="middle" fill="#4A5462">F2</text>
+<rect x="660" y="262" width="80" height="48" fill="#0B0F14" stroke="rgba(255,255,255,0.10)" stroke-width="1"/>
+<text x="700" y="293" text-anchor="middle" fill="#4A5462">L</text>
+<rect x="752" y="262" width="80" height="48" fill="#0B0F14" stroke="rgba(255,255,255,0.10)" stroke-width="1"/>
+<text x="792" y="293" text-anchor="middle" fill="#4A5462">D</text>
+<rect x="844" y="262" width="80" height="48" fill="#0F1419" stroke="#00D4FF" stroke-width="2"/>
+<text x="884" y="293" text-anchor="middle" fill="#00D4FF">F&#8217;</text>
+<rect x="936" y="262" width="80" height="48" fill="#0F1419" stroke="rgba(255,255,255,0.10)" stroke-width="1"/>
+<text x="976" y="293" text-anchor="middle" fill="#E8EAF0">B2</text>
+<rect x="1028" y="262" width="80" height="48" fill="#0F1419" stroke="rgba(255,255,255,0.10)" stroke-width="1"/>
+<text x="1068" y="293" text-anchor="middle" fill="#E8EAF0">U</text>
+<rect x="660" y="324" width="80" height="48" fill="#0F1419" stroke="rgba(255,255,255,0.10)" stroke-width="1"/>
+<text x="700" y="355" text-anchor="middle" fill="#E8EAF0">L&#8217;</text>
+<rect x="752" y="324" width="80" height="48" fill="#0F1419" stroke="rgba(255,255,255,0.10)" stroke-width="1"/>
+<text x="792" y="355" text-anchor="middle" fill="#E8EAF0">B&#8217;</text>
+<rect x="844" y="324" width="80" height="48" fill="#0F1419" stroke="rgba(255,255,255,0.10)" stroke-width="1"/>
+<text x="884" y="355" text-anchor="middle" fill="#E8EAF0">L2</text>
+<rect x="936" y="324" width="80" height="48" fill="#0F1419" stroke="rgba(255,255,255,0.10)" stroke-width="1"/>
+<text x="976" y="355" text-anchor="middle" fill="#E8EAF0">U</text>
+<rect x="1028" y="324" width="80" height="48" fill="#0F1419" stroke="rgba(255,255,255,0.10)" stroke-width="1"/>
+<text x="1068" y="355" text-anchor="middle" fill="#E8EAF0">L2</text>
+<rect x="660" y="386" width="80" height="48" fill="#0F1419" stroke="rgba(255,255,255,0.10)" stroke-width="1"/>
+<text x="700" y="417" text-anchor="middle" fill="#E8EAF0">F2</text>
+<rect x="752" y="386" width="80" height="48" fill="#0F1419" stroke="rgba(255,255,255,0.10)" stroke-width="1"/>
+<text x="792" y="417" text-anchor="middle" fill="#E8EAF0">R2</text>
+<rect x="844" y="386" width="80" height="48" fill="#0F1419" stroke="rgba(255,255,255,0.10)" stroke-width="1"/>
+<text x="884" y="417" text-anchor="middle" fill="#E8EAF0">B2</text>
+<rect x="936" y="386" width="80" height="48" fill="#0F1419" stroke="rgba(255,255,255,0.10)" stroke-width="1"/>
+<text x="976" y="417" text-anchor="middle" fill="#E8EAF0">D&#8217;</text>
+<rect x="1028" y="386" width="80" height="48" fill="#0F1419" stroke="rgba(255,255,255,0.10)" stroke-width="1"/>
+<text x="1068" y="417" text-anchor="middle" fill="#E8EAF0">R2</text>
+</g>
+<text x="660" y="540" font-family="'Segoe UI', Helvetica, Arial, sans-serif" font-size="46" font-weight="600" letter-spacing="1" fill="#E8EEF3">rubiks-cube-solver</text>
+<text x="660" y="582" font-family="'JetBrains Mono', Consolas, monospace" font-size="18" fill="#6B7585">C++17 → WebAssembly</text>
+</svg>

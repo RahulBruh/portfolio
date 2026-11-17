@@ -6,6 +6,7 @@ import ProjectDetailHero from "@/components/project-detail/ProjectDetailHero";
 import OtherProjectsSidebar from "@/components/project-detail/OtherProjectsSidebar";
 import SdxlLoraDemo from "@/components/project-detail/SdxlLoraDemo";
 import PathfindingDemo from "@/components/project-detail/PathfindingDemo";
+import RubiksDemo from "@/components/project-detail/RubiksDemo";
 import { GitHubIcon } from "@/components/shared/icons";
 
 export function generateStaticParams() {
@@ -40,6 +41,11 @@ export default async function ProjectPage(props: PageProps<"/projects/[slug]">) 
       {project.id === "astar-route-search" && (
         <div className="max-w-[1152px] mx-auto px-6 pt-16">
           <PathfindingDemo />
+        </div>
+      )}
+      {project.id === "rubiks-cube-solver" && (
+        <div className="max-w-[1152px] mx-auto px-6 pt-16">
+          <RubiksDemo />
         </div>
       )}
       <div

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rubik's Cube Solver: C++ two-phase in WebAssembly</title>
+  <meta name="description" content="Solve any Rubik's Cube in about 20 moves. Kociemba's two-phase algorithm written in C++ and compiled to WebAssembly.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <header class="top">
+      <div>
+        <h1>Rubik's Cube Solver</h1>
+        <p class="sub">Kociemba two-phase algorithm · C++17 compiled to WebAssembly</p>
+      </div>
+      <span class="pill" id="engine" data-state="loading">Loading solver…</span>
+    </header>
+
+    <main class="layout">
+      <section class="stage">
+        <div class="scene" id="scene" aria-label="3D cube. Drag to rotate the view, double-click to reset."></div>
+        <p class="hint">Drag to look around · double-click to reset the view</p>
+        <div class="net" id="net" aria-label="Flat view of all six faces"></div>
+      </section>
+
+      <aside class="panel">
+        <div class="card">
+          <div class="row">
+            <button class="btn primary" id="solve" disabled>Solve</button>
+            <button class="btn" id="scramble" disabled>Scramble</button>
+            <button class="btn" id="reset">Reset</button>
+          </div>
+          <p class="status" id="status" aria-live="polite">Building move and pruning tables…</p>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h2>Solution</h2>
+            <span class="badges" id="badges"></span>
+          </div>
+          <div class="moves" id="moves"><span class="empty">Scramble the cube, then press Solve.</span></div>
+          <div class="playback">
+            <button class="icon" id="first" title="Back to start (Home)" disabled>⏮</button>
+            <button class="icon" id="prev" title="Step back (←)" disabled>◀</button>
+            <button class="icon play" id="play" title="Play / pause (Space)" disabled>▶</button>
+            <button class="icon" id="next" title="Step forward (→)" disabled>▶︎|</button>
+            <button class="icon" id="last" title="Jump to solved (End)" disabled>⏭</button>
+            <label class="speed">Speed <input type="range" id="speed" min="60" max="600" value="260" step="10"></label>
+          </div>
+          <dl class="stats" id="stats"></dl>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h2>Turn</h2><span class="muted small">keys U R F D L B · Shift = counter-clockwise</span></div>
+          <div class="turnpad" id="turnpad"></div>
+          <form class="alg" id="alg">
+            <input id="alg-input" placeholder="Type moves, e.g. R U R' U' F2" autocomplete="off" spellcheck="false" aria-label="Move sequence">
+            <button class="btn" type="submit">Apply</button>
+          </form>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h2>Enter your cube</h2>
+            <label class="switch"><input type="checkbox" id="paint-mode"> Paint mode</label>
+          </div>
+          <p class="muted small">Turn on paint mode, pick a color, and click stickers on the 3D cube or the flat net to copy your real cube. The solver checks that it's a legal position before solving.</p>
+          <div class="palette" id="palette"></div>
+          <div class="row">
+            <button class="btn small" id="blank">Clear to gray</button>
+            <button class="btn small" id="copy">Copy state</button>
+          </div>
+        </div>
+
+        <details class="card settings">
+          <summary>Search settings</summary>
+          <label>Stop at
+            <select id="target">
+              <option value="20" selected>20 moves or fewer</option>
+              <option value="21">21 moves or fewer</option>
+              <option value="22">22 moves or fewer (fastest)</option>
+              <option value="0">shortest found in the time budget</option>
+            </select>
+          </label>
+          <label>Time budget
+            <select id="timeout">
+              <option value="250">0.25 s</option>
+              <option value="1000" selected>1 s</option>
+              <option value="3000">3 s</option>
+            </select>
+          </label>
+        </details>
+      </aside>
+    </main>
+
+    <footer class="foot">
+      <code id="facelets" title="Facelet string (Kociemba order U R F D L B)"></code>
+      <a href="https://github.com/RahulBruh/rubiks-cube-solver" target="_blank" rel="noopener">Source on GitHub</a>
+    </footer>
+  </div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
