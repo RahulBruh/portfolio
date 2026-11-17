@@ -1,6 +1,34 @@
 [
   {
     "bullets": [
+      "Implemented Kociemba's two-phase algorithm in **C++17** with IDA* search and BFS pruning tables, solving random cubes in **19.89 moves** on average (**91%** in 20 or fewer) with a **23 ms** median search",
+      "Compiled the engine to a **53 KB** WebAssembly module running in a Web Worker behind a 3D interface with scrambles, step-through playback and a paint mode that validates real cubes",
+      "Verified correctness with **~4M** C++ unit checks and a GitHub Actions pipeline that cross-checks an independent JavaScript cube model against the native and WebAssembly builds"
+    ],
+    "category": "Other",
+    "createdAt": 1794932595732,
+    "dates": "Nov. 2026",
+    "demo": "https://www.rahulmoka.com/projects/rubiks-cube-solver",
+    "example": false,
+    "link": "https://github.com/RahulBruh/rubiks-cube-solver",
+    "role": "Solo developer",
+    "summary": "Rubik's Cube solver written from scratch in C++17 with Kociemba's two-phase algorithm, compiled to WebAssembly to run a live 3D browser demo that solves any cube in about 20 moves.",
+    "tech": [
+      "C++",
+      "Algorithms",
+      "WebAssembly",
+      "JavaScript",
+      "Web Workers",
+      "Unit Testing",
+      "GitHub Actions"
+    ],
+    "title": "Rubik's Cube Solver (C++ / WebAssembly)",
+    "type": "Personal",
+    "updatedAt": 1794932595732,
+    "id": "rubiks-cube-solver-c-webassembly"
+  },
+  {
+    "bullets": [
       "Automated contract generation for **30+ clients** via a **Next.js, React, and Node.js** pipeline, saving **30 minutes per contract** by parsing form state into server-side templates and PDFs",
       "Refactored a complex React codebase, fixing **20 critical bugs** and resolving performance issues in an unorganized project"
     ],
