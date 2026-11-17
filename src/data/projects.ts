@@ -15,6 +15,24 @@ export type Project = {
 
 export const PROJECTS: Project[] = [
   {
+    id: "rubiks-cube-solver",
+    title: "Rubik's Cube Solver",
+    tag: "Algorithms / C++ · Nov 2026",
+    shortDesc:
+      "Kociemba's two-phase algorithm in C++17, compiled to WebAssembly: scramble, solve and replay any cube in about 20 moves, right in the browser.",
+    description:
+      "A Rubik's Cube solver written from scratch in C++17 with no dependencies. Phase 1 uses IDA* to bring the cube into the subgroup G1 = <U, D, R2, L2, F2, B2>, guided by corner-twist, edge-flip and slice-edge coordinates. Phase 2 finishes the cube using only G1 moves. Both phases prune with breadth-first-search distance tables, and the search keeps improving until it reaches a target length or a time budget. The same C++ is compiled with Emscripten and runs in a Web Worker behind the 3D interface above, so the solving happens in your browser.",
+    img: "/assets/rubiks-cube-solver.svg",
+    tech: ["C++17", "IDA*", "WebAssembly", "Emscripten", "JavaScript", "CSS 3D", "Web Workers", "GitHub Actions"],
+    github: "https://github.com/RahulBruh/rubiks-cube-solver",
+    highlights: [
+      "Implemented Kociemba's two-phase algorithm with six move tables and four BFS pruning tables (about 4 million entries, built in roughly 270 ms). Across 500 uniformly random cubes it averaged 19.89 moves with a 23 ms median search, solved 91% in 20 moves or fewer, and never needed more than 21.",
+      "Added an exact IDA* pre-search for scrambles of up to 7 moves that reuses the phase-1 bound as an admissible heuristic. Short scrambles now come back provably optimal (R U R' U' returns U R U' R', not 11 moves), and on a fully scrambled cube the pre-search stops at the root for free.",
+      "Compiled the engine to WebAssembly (53 KB) and ran it in a Web Worker, so building the tables and searching never stall the CSS-3D cube animation. The UI supports random-state scrambles, step-through playback, keyboard turns, and a paint mode that rejects impossible cubes with a specific reason: a twisted corner, a flipped edge, or a parity error.",
+      "Tested correctness on two independent models: about 4 million C++ checks, plus a JavaScript sticker model built from 3D rotations that CI checks against the native CLI on 200 random sequences and against the wasm build on 100 solves.",
+    ],
+  },
+  {
     id: "skills-support-agent",
     title: "Skills-Driven Support Agent",
     tag: "Agentic AI · Oct 2026",
