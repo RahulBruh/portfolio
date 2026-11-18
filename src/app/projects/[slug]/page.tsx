@@ -7,6 +7,7 @@ import OtherProjectsSidebar from "@/components/project-detail/OtherProjectsSideb
 import SdxlLoraDemo from "@/components/project-detail/SdxlLoraDemo";
 import PathfindingDemo from "@/components/project-detail/PathfindingDemo";
 import RubiksDemo from "@/components/project-detail/RubiksDemo";
+import OrderBookDemo from "@/components/project-detail/OrderBookDemo";
 import { GitHubIcon } from "@/components/shared/icons";
 
 export function generateStaticParams() {
@@ -46,6 +47,11 @@ export default async function ProjectPage(props: PageProps<"/projects/[slug]">) 
       {project.id === "rubiks-cube-solver" && (
         <div className="max-w-[1152px] mx-auto px-6 pt-16">
           <RubiksDemo />
+        </div>
+      )}
+      {project.id === "cpp-order-book" && (
+        <div className="max-w-[1152px] mx-auto px-6 pt-16">
+          <OrderBookDemo />
         </div>
       )}
       <div

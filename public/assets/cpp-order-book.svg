@@ -1,0 +1,133 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675">
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1200" y2="675" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#080C10"/><stop offset="1" stop-color="#0F1A22"/></linearGradient>
+<radialGradient id="glow" cx="380" cy="338" r="380" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#00D4FF" stop-opacity="0.10"/><stop offset="1" stop-color="#00D4FF" stop-opacity="0"/></radialGradient></defs>
+<rect width="1200" height="675" fill="url(#bg)"/>
+<circle cx="380" cy="338" r="380" fill="url(#glow)"/>
+<rect x="90" y="70" width="160" height="34" fill="#EF4444" fill-opacity="0.16"/>
+<text x="104" y="93" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" fill="#EF4444">100.07</text>
+<text x="208" y="93" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" fill="#E8EAF0">120</text>
+<rect x="280" y="77" width="50" height="21" fill="#161C24" stroke="#2A323D"/>
+<text x="287" y="92" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" fill="#9AA4B2">#103</text>
+<rect x="336" y="77" width="50" height="21" fill="#161C24" stroke="#2A323D"/>
+<text x="343" y="92" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" fill="#9AA4B2">#110</text>
+<rect x="392" y="77" width="50" height="21" fill="#161C24" stroke="#2A323D"/>
+<text x="399" y="92" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" fill="#9AA4B2">#111</text>
+<rect x="90" y="110" width="347" height="34" fill="#EF4444" fill-opacity="0.16"/>
+<text x="104" y="133" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" fill="#EF4444">100.06</text>
+<text x="208" y="133" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" fill="#E8EAF0">260</text>
+<rect x="280" y="117" width="50" height="21" fill="#161C24" stroke="#2A323D"/>
+<text x="287" y="132" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" fill="#9AA4B2">#120</text>
+<rect x="90" y="150" width="120" height="34" fill="#EF4444" fill-opacity="0.16"/>
+<text x="104" y="173" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" fill="#EF4444">100.05</text>
+<text x="208" y="173" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" fill="#E8EAF0">90</text>
+<rect x="280" y="157" width="50" height="21" fill="#161C24" stroke="#2A323D"/>
+<text x="287" y="172" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" fill="#9AA4B2">#126</text>
+<rect x="90" y="190" width="440" height="34" fill="#EF4444" fill-opacity="0.16"/>
+<text x="104" y="213" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" fill="#EF4444">100.04</text>
+<text x="208" y="213" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" fill="#E8EAF0">330</text>
+<rect x="280" y="197" width="50" height="21" fill="#161C24" stroke="#2A323D"/>
+<text x="287" y="212" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" fill="#9AA4B2">#135</text>
+<rect x="90" y="230" width="240" height="34" fill="#EF4444" fill-opacity="0.16"/>
+<text x="104" y="253" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" fill="#EF4444">100.03</text>
+<text x="208" y="253" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" fill="#E8EAF0">180</text>
+<rect x="280" y="237" width="50" height="21" fill="#161C24" stroke="#2A323D"/>
+<text x="287" y="252" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" fill="#9AA4B2">#136</text>
+<rect x="336" y="237" width="50" height="21" fill="#161C24" stroke="#2A323D"/>
+<text x="343" y="252" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" fill="#9AA4B2">#138</text>
+<rect x="90" y="270" width="547" height="34" fill="#EF4444" fill-opacity="0.16"/>
+<text x="104" y="293" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" fill="#EF4444">100.02</text>
+<text x="208" y="293" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" fill="#E8EAF0">410</text>
+<rect x="280" y="277" width="50" height="21" fill="#161C24" stroke="#2A323D"/>
+<text x="287" y="292" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" fill="#9AA4B2">#145</text>
+<rect x="336" y="277" width="50" height="21" fill="#161C24" stroke="#2A323D"/>
+<text x="343" y="292" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" fill="#9AA4B2">#147</text>
+<rect x="392" y="277" width="50" height="21" fill="#161C24" stroke="#2A323D"/>
+<text x="399" y="292" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" fill="#9AA4B2">#151</text>
+<rect x="448" y="277" width="50" height="21" fill="#161C24" stroke="#2A323D"/>
+<text x="455" y="292" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" fill="#9AA4B2">#153</text>
+<rect x="90" y="310" width="200" height="34" fill="#EF4444" fill-opacity="0.16"/>
+<text x="104" y="333" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" fill="#EF4444">100.01</text>
+<text x="208" y="333" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" fill="#E8EAF0">150</text>
+<rect x="280" y="317" width="50" height="21" fill="#161C24" stroke="#2A323D"/>
+<text x="287" y="332" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" fill="#9AA4B2">#154</text>
+<rect x="336" y="317" width="50" height="21" fill="#161C24" stroke="#2A323D"/>
+<text x="343" y="332" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" fill="#9AA4B2">#156</text>
+<rect x="392" y="317" width="50" height="21" fill="#161C24" stroke="#2A323D"/>
+<text x="399" y="332" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" fill="#9AA4B2">#160</text>
+<rect x="448" y="317" width="50" height="21" fill="#161C24" stroke="#2A323D"/>
+<text x="455" y="332" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" fill="#9AA4B2">#161</text>
+<rect x="90" y="350" width="560" height="34" fill="#0F1419" stroke="#1E2630"/>
+<text x="370" y="373" text-anchor="middle" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" fill="#6B7585">SPREAD 0.02 · MID 100.000</text>
+<rect x="90" y="390" width="293" height="34" fill="#22C55E" fill-opacity="0.16"/>
+<text x="104" y="413" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" fill="#22C55E">99.99</text>
+<text x="208" y="413" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" fill="#E8EAF0">220</text>
+<rect x="280" y="397" width="50" height="21" fill="#161C24" stroke="#2A323D"/>
+<text x="287" y="412" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" fill="#9AA4B2">#162</text>
+<rect x="336" y="397" width="50" height="21" fill="#161C24" stroke="#2A323D"/>
+<text x="343" y="412" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" fill="#9AA4B2">#166</text>
+<rect x="392" y="397" width="50" height="21" fill="#161C24" stroke="#2A323D"/>
+<text x="399" y="412" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" fill="#9AA4B2">#167</text>
+<rect x="448" y="397" width="50" height="21" fill="#161C24" stroke="#2A323D"/>
+<text x="455" y="412" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" fill="#9AA4B2">#176</text>
+<rect x="90" y="430" width="507" height="34" fill="#22C55E" fill-opacity="0.16"/>
+<text x="104" y="453" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" fill="#22C55E">99.98</text>
+<text x="208" y="453" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" fill="#E8EAF0">380</text>
+<rect x="280" y="437" width="50" height="21" fill="#161C24" stroke="#2A323D"/>
+<text x="287" y="452" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" fill="#9AA4B2">#181</text>
+<rect x="336" y="437" width="50" height="21" fill="#161C24" stroke="#2A323D"/>
+<text x="343" y="452" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" fill="#9AA4B2">#188</text>
+<rect x="90" y="470" width="187" height="34" fill="#22C55E" fill-opacity="0.16"/>
+<text x="104" y="493" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" fill="#22C55E">99.97</text>
+<text x="208" y="493" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" fill="#E8EAF0">140</text>
+<rect x="280" y="477" width="50" height="21" fill="#161C24" stroke="#2A323D"/>
+<text x="287" y="492" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" fill="#9AA4B2">#197</text>
+<rect x="336" y="477" width="50" height="21" fill="#161C24" stroke="#2A323D"/>
+<text x="343" y="492" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" fill="#9AA4B2">#199</text>
+<rect x="90" y="510" width="400" height="34" fill="#22C55E" fill-opacity="0.16"/>
+<text x="104" y="533" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" fill="#22C55E">99.96</text>
+<text x="208" y="533" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" fill="#E8EAF0">300</text>
+<rect x="280" y="517" width="50" height="21" fill="#161C24" stroke="#2A323D"/>
+<text x="287" y="532" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" fill="#9AA4B2">#208</text>
+<rect x="336" y="517" width="50" height="21" fill="#161C24" stroke="#2A323D"/>
+<text x="343" y="532" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" fill="#9AA4B2">#211</text>
+<rect x="392" y="517" width="50" height="21" fill="#161C24" stroke="#2A323D"/>
+<text x="399" y="532" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" fill="#9AA4B2">#213</text>
+<rect x="90" y="550" width="120" height="34" fill="#22C55E" fill-opacity="0.16"/>
+<text x="104" y="573" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" fill="#22C55E">99.95</text>
+<text x="208" y="573" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" fill="#E8EAF0">90</text>
+<rect x="280" y="557" width="50" height="21" fill="#161C24" stroke="#2A323D"/>
+<text x="287" y="572" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" fill="#9AA4B2">#219</text>
+<rect x="336" y="557" width="50" height="21" fill="#161C24" stroke="#2A323D"/>
+<text x="343" y="572" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" fill="#9AA4B2">#221</text>
+<rect x="90" y="590" width="333" height="34" fill="#22C55E" fill-opacity="0.16"/>
+<text x="104" y="613" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" fill="#22C55E">99.94</text>
+<text x="208" y="613" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" fill="#E8EAF0">250</text>
+<rect x="280" y="597" width="50" height="21" fill="#161C24" stroke="#2A323D"/>
+<text x="287" y="612" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" fill="#9AA4B2">#222</text>
+<rect x="90" y="630" width="227" height="34" fill="#22C55E" fill-opacity="0.16"/>
+<text x="104" y="653" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" fill="#22C55E">99.93</text>
+<text x="208" y="653" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" fill="#E8EAF0">170</text>
+<rect x="280" y="637" width="50" height="21" fill="#161C24" stroke="#2A323D"/>
+<text x="287" y="652" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" fill="#9AA4B2">#230</text>
+<rect x="336" y="637" width="50" height="21" fill="#161C24" stroke="#2A323D"/>
+<text x="343" y="652" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" fill="#9AA4B2">#239</text>
+<text x="730" y="96" font-family="'JetBrains Mono', Consolas, monospace" font-size="18" fill="#00D4FF" letter-spacing="3">PRICE-TIME · O(1) CANCEL</text>
+<text x="730" y="160" font-family="Inter, system-ui, sans-serif" font-size="44" font-weight="700" fill="#E8EAF0">Limit Order Book</text>
+<text x="730" y="206" font-family="'JetBrains Mono', Consolas, monospace" font-size="18" fill="#6B7585">C++20 · WebAssembly</text>
+<text x="730" y="270" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" fill="#00D4FF">TRADE</text>
+<text x="840" y="270" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" fill="#C9CED8">100 @ 100.01</text>
+<text x="730" y="306" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" fill="#00D4FF">TRADE</text>
+<text x="840" y="306" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" fill="#C9CED8">60 @ 100.01</text>
+<text x="730" y="342" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" fill="#6B7585">ACCEPT</text>
+<text x="840" y="342" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" fill="#C9CED8">#412 BUY IOC 160</text>
+<text x="730" y="378" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" fill="#6B7585">CANCEL</text>
+<text x="840" y="378" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" fill="#C9CED8">#388 · 40</text>
+<text x="730" y="414" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" fill="#6B7585">MODIFY</text>
+<text x="840" y="414" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" fill="#C9CED8">#377 → 99.97</text>
+<text x="730" y="500" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" fill="#9AA4B2">std::map</text>
+<rect x="730" y="510" width="306" height="18" fill="#4A5462"/>
+<text x="1120" y="525" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" fill="#E8EAF0">50M/s</text>
+<text x="730" y="564" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" fill="#9AA4B2">tick array</text>
+<rect x="730" y="574" width="380" height="18" fill="#00D4FF"/>
+<text x="1120" y="589" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" fill="#E8EAF0">62M/s</text>
+</svg>
