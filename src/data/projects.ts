@@ -33,6 +33,24 @@ export const PROJECTS: Project[] = [
     ],
   },
   {
+    id: "cpp-order-book",
+    title: "C++ Limit Order Book & Matching Engine",
+    tag: "Systems / C++ · Nov 2026",
+    shortDesc:
+      "A C++20 matching engine with price-time priority, O(1) cancels and zero heap allocations on the hot path, compiled to WebAssembly so you can trade against it in the browser.",
+    description:
+      "A single-instrument limit order book written in C++20. It supports limit, market and IOC orders with partial fills, cancels and modifies, and reports every accept, reject, trade, cancel and modify through a listener that is a template parameter, so the calls inline. All the matching logic lives once in OrderBook<Levels, Listener>, and two price-level stores plug into it: a std::map baseline and a tick-indexed array with a 64-bit occupancy bitset. A randomized differential test checks both against a deliberately naive reference book. The same headers are compiled unchanged to a 62 KB WebAssembly module for the demo above.",
+    img: "/assets/cpp-order-book.svg",
+    tech: ["C++20", "Data Structures", "WebAssembly", "CMake", "GoogleTest", "ASan/UBSan", "GitHub Actions"],
+    github: "https://github.com/RahulBruh/cpp-order-book",
+    highlights: [
+      "Built price-time priority matching for limit, market and IOC orders, with intrusive FIFO queues for O(1) cancels from anywhere in a queue, a fixed-capacity object pool and an open-addressing id map, so the tick-array book makes zero heap allocations on the hot path (checked by a test that counts operator new).",
+      "Replaced std::map price levels with a tick-indexed array and a 64-bit occupancy bitset, raising throughput to 58–63M msgs/s vs 45–50M (1.22–1.33x) on a 5M-message replay against a book of about 5,000 orders.",
+      "Verified correctness with 57 GoogleTest tests and a differential test that replays about 1.15M random operations into both books and a naive reference book, requiring identical event streams after every operation, all run under ASan/UBSan on GCC and Clang in GitHub Actions.",
+      "Compiled the engine to WebAssembly with clang and wasm-ld and built an interactive book on top of it: a depth ladder showing each level's queue, order entry, modify and cancel, simulated order flow, and an in-browser benchmark whose trade counts match the native build exactly on the same seed.",
+    ],
+  },
+  {
     id: "skills-support-agent",
     title: "Skills-Driven Support Agent",
     tag: "Agentic AI · Oct 2026",
