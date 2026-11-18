@@ -149,6 +149,7 @@
     "category": "Machine Learning / AI",
     "createdAt": 1791814388194,
     "dates": "Oct. 2026 – Nov. 2026",
+    "demo": "https://www.rahulmoka.com/projects/transaction-nlp",
     "example": false,
     "link": "https://github.com/RahulBruh/transaction-nlp",
     "role": "Solo developer",
@@ -167,7 +168,7 @@
     ],
     "title": "Transaction NLP: Merchant Matching & Categorization",
     "type": "Personal",
-    "updatedAt": 1794064605019,
+    "updatedAt": 1795041598357,
     "id": "transaction-nlp-merchant-matching-categorization"
   },
   {
