@@ -60,6 +60,7 @@
     "category": "Backend",
     "createdAt": 1794317770660,
     "dates": "Nov. 2026",
+    "demo": "https://www.rahulmoka.com/projects/cpp-order-book",
     "example": false,
     "link": "https://github.com/RahulBruh/cpp-order-book",
     "role": "Solo developer",
@@ -76,7 +77,7 @@
     ],
     "title": "C++ Limit Order Book & Matching Engine",
     "type": "Personal",
-    "updatedAt": 1794317770660,
+    "updatedAt": 1795043383561,
     "id": "c-limit-order-book-matching-engine"
   },
   {
