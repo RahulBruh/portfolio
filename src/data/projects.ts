@@ -8,12 +8,44 @@ export type Project = {
   img2?: string;
   tech: string[];
   github?: string;
+  /** Live demo URL, shown as a "Live demo" button on the project page. */
+  demo?: string;
   highlights: string[];
   /** Overrides the default `/projects/[id]` link — for projects with their own dedicated route. */
   href?: string;
 };
 
 export const PROJECTS: Project[] = [
+  {
+    id: "campus-pilot",
+    title: "Campus Pilot",
+    tag: "Full-Stack / AI · Nov 2026",
+    shortDesc:
+      "A college productivity app with an AI study assistant: class schedule, assignments and weighted grades, plus cited answers from your own course documents.",
+    description:
+      "A college productivity app that keeps courses, the weekly class schedule, assignments and weighted grades in one place, with an AI study assistant on top. Students upload lecture notes and syllabi; the app indexes them for retrieval-augmented chat with cited answers, imports deadlines from a syllabus through a propose-review-confirm flow, and generates quizzes and spaced-repetition flashcards. An MCP server exposes the same data to AI assistants. The live demo gives every visitor a private sample semester that is deleted after 24 hours.",
+    img: "/assets/campus-pilot.png",
+    tech: [
+      "Python",
+      "FastAPI",
+      "PostgreSQL",
+      "pgvector",
+      "Claude API",
+      "React",
+      "TypeScript",
+      "Tailwind",
+      "Docker",
+      "Vercel",
+    ],
+    github: "https://github.com/RahulBruh/campus-pilot",
+    demo: "https://campus-pilot-six.vercel.app/demo",
+    highlights: [
+      "Built a full-stack student planner (FastAPI, SQLAlchemy 2, Alembic, PostgreSQL; React 19, TypeScript, TanStack Query) for courses, class meetings, assignments and weighted grades. Every lookup joins through course ownership, so another user's resources return 404, and grades use Decimal math that leaves ungraded work out instead of counting it as zero.",
+      "Implemented RAG over uploaded PDFs and notes: magic-byte upload checks, page-aware chunking, local bge-small embeddings (384-d) in a pgvector HNSW index with the owner filter inside the vector query, and Claude answers whose [n] citations are dropped server-side unless they point at a chunk that was actually retrieved.",
+      "Made syllabus import propose → review → confirm: the model extracts assignments and grade weights, ambiguous dates become null with a warning instead of a guess, and re-imports dedupe on title and due date. Quizzes and flashcards are generated from course material, with SM-2-style review scheduling.",
+      "Deployed a public demo on Vercel (Vite frontend plus the FastAPI API as a container service, Neon Postgres) that creates a seeded sandbox account per visitor in about 2 seconds, stores uploads in Postgres so the container stays stateless, and caps AI requests per visitor and per day; 48 pytest tests run against a real Postgres with a fake LLM and embedder.",
+    ],
+  },
   {
     id: "rubiks-cube-solver",
     title: "Rubik's Cube Solver",

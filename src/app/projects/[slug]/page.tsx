@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { PROJECTS } from "@/data/projects";
 import ProjectDetailHero from "@/components/project-detail/ProjectDetailHero";
@@ -83,6 +83,17 @@ export default async function ProjectPage(props: PageProps<"/projects/[slug]">) 
               >
                 <GitHubIcon size={15} />
                 View Code
+              </a>
+            )}
+            {project.demo && (
+              <a
+                href={project.demo}
+                target="_blank"
+                rel="noopener"
+                className="flex items-center gap-2 whitespace-nowrap border border-accent-border-40 text-accent px-5 py-2.5 text-sm transition-all duration-200 hover:border-accent"
+              >
+                <ExternalLink size={15} />
+                Live demo
               </a>
             )}
             <Link
