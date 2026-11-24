@@ -89,6 +89,7 @@
     "category": "Frontend",
     "createdAt": 1793897120717,
     "dates": "Nov. 2026",
+    "demo": "https://rahulmoka.com/kestrel-spend",
     "example": false,
     "link": "https://rahulmoka.com/kestrel-spend",
     "role": "Solo developer",
@@ -105,7 +106,7 @@
     ],
     "title": "Kestrel: Keyboard-First Spend Console",
     "type": "Personal",
-    "updatedAt": 1793898157432,
+    "updatedAt": 1795531899425,
     "id": "kestrel-keyboard-first-spend-console"
   },
   {
