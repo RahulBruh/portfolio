@@ -1,12 +1,12 @@
 import type { NextConfig } from "next";
 
-const KESTREL_ORIGIN = "https://kestrel-spend.higgsfield.app";
+const KESTREL_ORIGIN = "https://kestrel-spend.rahulmoka.workers.dev";
 
 const nextConfig: NextConfig = {
   async rewrites() {
     return [
       { source: "/availability", destination: "/availability.html" },
-      // Kestrel (spend console project) is hosted on Higgsfield and served
+      // Kestrel (spend console project) runs on Cloudflare Workers and is served
       // under this path. The app itself is built with the /kestrel-spend
       // basepath, so pages, assets and server functions all stay in it.
       // The trailing slash matters: the origin redirects /kestrel-spend to
