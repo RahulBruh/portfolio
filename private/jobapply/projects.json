@@ -1,6 +1,35 @@
 [
   {
     "bullets": [
+      "Built a full-stack student planner (FastAPI, SQLAlchemy, PostgreSQL; React 19 + TypeScript) for courses, class schedules, assignments and weighted grades, with every query scoped by course ownership so other users' data returns 404",
+      "Implemented RAG over uploaded PDFs and notes: page-aware chunking, local bge-small embeddings in a pgvector HNSW index filtered by owner inside the vector query, and Claude answers whose [n] citations are checked against the chunks actually retrieved",
+      "Deployed a public demo on Vercel (Vite frontend + FastAPI container, Neon Postgres) that creates a seeded sandbox account per visitor in ~2s, with AI spend capped per visitor and per day; covered by 48 pytest tests using a fake LLM and embedder"
+    ],
+    "category": "Full-Stack",
+    "createdAt": 1795533440058,
+    "dates": "Nov. 2026",
+    "demo": "https://campus-pilot-six.vercel.app/demo",
+    "example": false,
+    "link": "https://github.com/RahulBruh/campus-pilot",
+    "role": "Solo developer",
+    "summary": "College productivity app with an AI study assistant: schedules, assignments and weighted grades, plus cited RAG chat over course documents, quizzes and spaced-repetition flashcards.",
+    "tech": [
+      "Python",
+      "FastAPI",
+      "React",
+      "TypeScript",
+      "PostgreSQL",
+      "pgvector",
+      "RAG",
+      "Claude API"
+    ],
+    "title": "Campus Pilot",
+    "type": "Personal",
+    "updatedAt": 1795533440058,
+    "id": "campus-pilot"
+  },
+  {
+    "bullets": [
       "Implemented Kociemba's two-phase algorithm in **C++17** with IDA* search and BFS pruning tables, solving random cubes in **19.89 moves** on average (**91%** in 20 or fewer) with a **23 ms** median search",
       "Compiled the engine to a **53 KB** WebAssembly module running in a Web Worker behind a 3D interface with scrambles, step-through playback and a paint mode that validates real cubes",
       "Verified correctness with **~4M** C++ unit checks and a GitHub Actions pipeline that cross-checks an independent JavaScript cube model against the native and WebAssembly builds"
