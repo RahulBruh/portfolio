@@ -47,6 +47,33 @@ export const PROJECTS: Project[] = [
     ],
   },
   {
+    id: "kestrel-spend",
+    title: "Kestrel Spend Console",
+    tag: "Frontend · Nov 2026",
+    shortDesc:
+      "A spend console that filters, sorts and bulk-edits 50,000 card transactions off the main thread, driven almost entirely from the keyboard.",
+    description:
+      "A keyboard-first console for company card spend, built in React 19 and TypeScript over a synthetic ledger of 50,000 transactions. All filtering, sorting and totals run in a Web Worker, a hand-rolled virtualized grid keeps only the visible rows in the DOM, and a small query language (cat:travel >500 is:missing) narrows the ledger as you type. Edits apply instantly, can be undone and redone, and are saved to the edge as an append-only event log, so your workspace is still there after a reload. The interface is built on Talon, a token-based design system made for the project.",
+    img: "/assets/kestrel-spend.png",
+    tech: [
+      "React 19",
+      "TypeScript",
+      "TanStack Start",
+      "Vite",
+      "Tailwind",
+      "Web Workers",
+      "Cloudflare Workers",
+      "Cloudflare D1",
+    ],
+    demo: "/kestrel-spend",
+    highlights: [
+      "Built a hand-rolled virtualized grid that renders about 30 DOM rows for 50,000 transactions, with a ⌘K fuzzy command palette and a full keyboard model: j/k navigation, shift-range selection, undo and redo.",
+      "Moved filtering, sorting and aggregation into a Web Worker over typed-array columns (700 KB for 50,000 rows), so queries never block the interface; the console shows how long each one took.",
+      "Wrote a tokenizing query language with live syntax highlighting and autocomplete. Filters, sort and view live in the URL, so any view is a shareable link.",
+      "Persisted optimistic bulk edits as an append-only event log in Cloudflare D1 and used computed inverses for undo and redo, with 9 unit tests covering the ledger, edit, query and fuzzy-search logic. Self-hosted on Cloudflare Workers and served under this domain through a rewrite.",
+    ],
+  },
+  {
     id: "rubiks-cube-solver",
     title: "Rubik's Cube Solver",
     tag: "Algorithms / C++ · Nov 2026",
