@@ -118,9 +118,9 @@
     "category": "Frontend",
     "createdAt": 1793897120717,
     "dates": "Nov. 2026",
-    "demo": "https://rahulmoka.com/kestrel-spend",
+    "demo": "https://kestrel-spend.rahulmoka.workers.dev/kestrel-spend/",
     "example": false,
-    "link": "https://rahulmoka.com/kestrel-spend",
+    "link": "https://github.com/RahulBruh/kestrel-spend",
     "role": "Solo developer",
     "summary": "Keyboard-first spend console in React 19 + TypeScript that virtualizes, filters and bulk-edits 50,000 card transactions off the main thread, built on a custom design system.",
     "tech": [
@@ -135,7 +135,7 @@
     ],
     "title": "Kestrel: Keyboard-First Spend Console",
     "type": "Personal",
-    "updatedAt": 1795531899425,
+    "updatedAt": 1795538492999,
     "id": "kestrel-keyboard-first-spend-console"
   },
   {
